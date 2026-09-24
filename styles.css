@@ -823,7 +823,7 @@ body {
   box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Unified Process Color Palette (P1 - P8) - Matched to Gantt Visualization */
+/* Unified Process Color Palette (P1 - P10) - Matched to Gantt Visualization */
 .badge-p1 { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
 .badge-p2 { background: #FEF3C7; color: #B45309; border: 1px solid #FCD34D; }
 .badge-p3 { background: #FFE4E8; color: #E11D48; border: 1px solid #FFA8BA; }
@@ -832,6 +832,8 @@ body {
 .badge-p6 { background: #D1FAE5; color: #047857; border: 1px solid #86EFAC; }
 .badge-p7 { background: #FFEDD5; color: #C2410C; border: 1px solid #FDBA74; }
 .badge-p8 { background: #E0E7FF; color: #4338CA; border: 1px solid #A5B4FC; }
+.badge-p9 { background: #FDF4FF; color: #C026D3; border: 1px solid #F0ABFC; }
+.badge-p10 { background: #ECFCCB; color: #4D7C0F; border: 1px solid #BEF264; }
 
 /* 3D Mini Stepper Capsule inside Burst Pill Card */
 .bt-stepper-wrap {
@@ -1394,6 +1396,8 @@ body {
 .block-p6 { background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #FFFFFF; }
 .block-p7 { background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); color: #FFFFFF; }
 .block-p8 { background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); color: #FFFFFF; }
+.block-p9 { background: linear-gradient(135deg, #D946EF 0%, #C026D3 100%); color: #FFFFFF; }
+.block-p10 { background: linear-gradient(135deg, #84CC16 0%, #65A30D 100%); color: #FFFFFF; }
 
 .gantt-time-labels {
   display: flex; width: 100%; min-width: 440px; margin-top: 8px; position: relative; height: 20px;
@@ -1459,6 +1463,12 @@ body {
   font-weight: 800;
   font-size: 1.02rem;
   color: #4F46E5;
+}
+.tat-highlight {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.02rem;
+  color: #0284C7;
 }
 .wt-pill {
   display: inline-block;
@@ -1762,6 +1772,7 @@ body {
 [data-theme="dark"] .makespan-pill strong { color: #A78BFA; }
 
 [data-theme="dark"] .ct-highlight { color: #A5B4FC; }
+[data-theme="dark"] .tat-highlight { color: #7DD3FC; }
 
 [data-theme="dark"] .wt-pill {
   background: #1D2235;
@@ -1795,6 +1806,8 @@ body {
 [data-theme="dark"] .badge-p6 { background: #022C22; color: #6EE7B7; border-color: #059669; }
 [data-theme="dark"] .badge-p7 { background: #431407; color: #FDBA74; border-color: #EA580C; }
 [data-theme="dark"] .badge-p8 { background: #1E1B4B; color: #C7D2FE; border-color: #6366F1; }
+[data-theme="dark"] .badge-p9 { background: #4A044E; color: #F5D0FE; border-color: #A21CAF; }
+[data-theme="dark"] .badge-p10 { background: #1A2E05; color: #D9F99D; border-color: #65A30D; }
 
 [data-theme="dark"] .burst-pill-card {
   background: #1D2235;

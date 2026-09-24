@@ -144,8 +144,8 @@
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
                 <div class="stepper-val-wrap">
-                  <input type="number" id="num-processes" class="stepper-input" value="4" min="1" max="8" step="1"
-                    required aria-label="จำนวนกระบวนการ" placeholder="2 - 8">
+                  <input type="number" id="num-processes" class="stepper-input" value="4" min="1" max="10" step="1"
+                    required aria-label="จำนวนกระบวนการ" placeholder="2 - 10">
                   <span class="stepper-unit" id="unit-num-processes">กระบวนการ</span>
                 </div>
                 <button type="button" class="stepper-btn stepper-btn-inc" id="btn-proc-inc" aria-label="เพิ่มจำนวนกระบวนการ" title="เพิ่มจำนวน (Increase)">
@@ -368,7 +368,8 @@
                     <th scope="col" class="th-process" id="th-process">PROCESS</th>
                     <th scope="col" id="th-bt">BURST TIME (BT)</th>
                     <th scope="col" id="th-st">START TIME (ST)</th>
-                    <th scope="col" id="th-ct">COMPLETION / TAT</th>
+                    <th scope="col" id="th-ct">COMPLETION (CT)</th>
+                    <th scope="col" id="th-tat">TURNAROUND (TAT)</th>
                     <th scope="col" id="th-wt">WAITING TIME (WT)</th>
                     <th scope="col" id="th-status">STATUS</th>
                   </tr>
@@ -466,16 +467,18 @@
           thProcess: "PROCESS (โปรเซส)",
           thBt: "BURST TIME (BT)",
           thSt: "START TIME (ST)",
-          thCt: "COMPLETION / TAT",
+          thCt: "COMPLETION (CT)",
+          thTat: "TURNAROUND (TAT)",
           thWt: "WAITING TIME (WT)",
           thStatus: "STATUS (สถานะ)",
           procLabelPrefix: "กระบวนการ ",
           statusCompleted: "เสร็จสมบูรณ์",
           glossarySummaryTitle: "สรุปคำศัพท์ & สูตรคำนวณ CPU Scheduling (คลิกเพื่อดู)",
           footerText: "ออกแบบด้วยสไตล์ soft Claymorphism aesthetics • โปรแกรมจำลองการจัดคิวซีพียู (AT = 0)",
+          placeholderNumProc: "2 - 10",
           errEmptyProc: "กรุณาระบุจำนวนโปรเซส (Number of Processes)",
-          errInvalidProc: "จำนวนโปรเซสต้องเป็นจำนวนเต็มบวกที่มากกว่า 0 (เช่น 2 - 8)",
-          errMaxProc: "จำนวนโปรเซสสูงสุดไม่เกิน 8 กระบวนการ เพื่อความสมบูรณ์ของแผนภูมิแกนต์และตาราง",
+          errInvalidProc: "จำนวนโปรเซสต้องเป็นจำนวนเต็มบวกที่มากกว่า 0 (เช่น 2 - 10)",
+          errMaxProc: "จำนวนโปรเซสสูงสุดไม่เกิน 10 กระบวนการ เพื่อความสมบูรณ์ของแผนภูมิแกนต์และตาราง",
           errEmptyTq: "กรุณาระบุควอนตัมเวลา (Time Quantum Q) สำหรับ Round Robin",
           errInvalidTq: "ควอนตัมเวลา (Time Quantum Q) ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
           errEmptyBt: "กรุณากรอกข้อมูลให้ครบทุกโปรเซส (พบช่องว่างที่ {p})",
@@ -503,7 +506,7 @@
           badgeStatusAt: "Arrival Time (AT) = 0",
           labelNumProcesses: "Number of Processes",
           processUnit: "Processes",
-          placeholderNumProc: "2 - 8",
+          placeholderNumProc: "2 - 10",
           labelTqText: "Time Quantum (Q)",
           labelHintRr: "For Round Robin",
           placeholderTq: "e.g. 2",
@@ -542,7 +545,8 @@
           thProcess: "PROCESS",
           thBt: "BURST TIME (BT)",
           thSt: "START TIME (ST)",
-          thCt: "COMPLETION / TAT",
+          thCt: "COMPLETION TIME (CT)",
+          thTat: "TURNAROUND TIME (TAT)",
           thWt: "WAITING TIME (WT)",
           thStatus: "STATUS",
           procLabelPrefix: "Process ",
@@ -550,8 +554,8 @@
           glossarySummaryTitle: "Glossary & Formulas (Click to expand)",
           footerText: "Crafted with soft Claymorphism aesthetics • Instantaneous CPU Scheduling Simulator (AT = 0)",
           errEmptyProc: "Please enter the number of processes.",
-          errInvalidProc: "Number of processes must be a positive integer greater than 0 (e.g. 2 - 8).",
-          errMaxProc: "Maximum allowed number of processes is 8 for optimal chart rendering.",
+          errInvalidProc: "Number of processes must be a positive integer greater than 0 (e.g. 2 - 10).",
+          errMaxProc: "Maximum allowed number of processes is 10 for optimal chart rendering.",
           errEmptyTq: "Please enter the Time Quantum (Q) for Round Robin.",
           errInvalidTq: "Time Quantum (Q) must be a positive integer greater than 0.",
           errEmptyBt: "Please fill in Burst Time for all processes (missing at {p}).",
@@ -601,6 +605,7 @@
           'th-bt': t.thBt,
           'th-st': t.thSt,
           'th-ct': t.thCt,
+          'th-tat': t.thTat,
           'th-wt': t.thWt,
           'th-status': t.thStatus,
           'glossary-summary-title': t.glossarySummaryTitle,
@@ -848,7 +853,7 @@
           return { isValid: false, key: 'errInvalidProc', message: t.errInvalidProc, input: numProcInput };
         }
 
-        if (numProc > 8) {
+        if (numProc > 10) {
           return { isValid: false, key: 'errMaxProc', message: t.errMaxProc, input: numProcInput };
         }
 
@@ -932,10 +937,10 @@
           ],
           stamps: [0, 6, 14, 21, 24],
           rows: [
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 6, wt: 0 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 6, ct: 14, wt: 6 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 14, ct: 21, wt: 14 },
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 21, ct: 24, wt: 21 }
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 6, tat: 6, wt: 0 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 6, ct: 14, tat: 14, wt: 6 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 14, ct: 21, tat: 21, wt: 14 },
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 21, ct: 24, tat: 24, wt: 21 }
           ]
         },
         sjf: {
@@ -956,10 +961,10 @@
           ],
           stamps: [0, 3, 9, 16, 24],
           rows: [
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 0, ct: 3, wt: 0 },
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 3, ct: 9, wt: 3 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 9, ct: 16, wt: 9 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 16, ct: 24, wt: 16 }
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 0, ct: 3, tat: 3, wt: 0 },
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 3, ct: 9, tat: 9, wt: 3 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 9, ct: 16, tat: 16, wt: 9 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 16, ct: 24, tat: 24, wt: 16 }
           ]
         },
         rr: {
@@ -989,10 +994,10 @@
           ],
           stamps: [0, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 24],
           rows: [
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 17, wt: 11 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 2, ct: 23, wt: 15 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 4, ct: 24, wt: 17 },
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 6, ct: 15, wt: 12 }
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 17, tat: 17, wt: 11 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 2, ct: 23, tat: 23, wt: 15 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 4, ct: 24, tat: 24, wt: 17 },
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 6, ct: 15, tat: 15, wt: 12 }
           ]
         }
       };
@@ -1073,6 +1078,7 @@
               <td><strong>${r.bt}</strong> <span class="unit-text">ms</span></td>
               <td>${r.st} <span class="unit-text">ms</span></td>
               <td><span class="ct-highlight">${r.ct}</span> <span class="unit-text">ms</span></td>
+              <td><span class="tat-highlight">${r.tat !== undefined ? r.tat : r.ct}</span> <span class="unit-text">ms</span></td>
               <td><span class="wt-pill">${r.wt}</span> <span class="unit-text">ms</span></td>
               <td><span class="status-pill-completed">${statusLabel}</span></td>
             `;
@@ -1145,7 +1151,7 @@
         for (let i = 1; i <= count; i++) {
           const defaultVal = (existingValues[i - 1] !== undefined && existingValues[i - 1] !== '')
             ? existingValues[i - 1]
-            : ([6, 8, 7, 3, 5, 4, 9, 2][i - 1] || (Math.floor(Math.random() * 8) + 2));
+            : ([6, 8, 7, 3, 5, 4, 9, 2, 6, 8][i - 1] || (Math.floor(Math.random() * 8) + 2));
 
           const card = document.createElement('div');
           card.className = 'burst-pill-card burst-card-enter';
@@ -1401,7 +1407,7 @@
           if (numProcInput && btnProcDec && btnProcInc) {
             const val = parseInt(numProcInput.value, 10);
             btnProcDec.disabled = (val <= 1);
-            btnProcInc.disabled = (val >= 8);
+            btnProcInc.disabled = (val >= 10);
           }
 
           if (tqInput && btnTqDec && btnTqInc) {
@@ -1430,7 +1436,7 @@
         if (btnProcInc && numProcInput) {
           attachHoldRepeat(btnProcInc, (isRapid) => {
             let val = parseInt(numProcInput.value, 10) || 4;
-            if (val < 8) {
+            if (val < 10) {
               val = val + 1;
               numProcInput.value = val;
               if (!isRapid) animateCounter(numProcInput, 'up');
@@ -1474,7 +1480,7 @@
         if (numProcInput) {
           numProcInput.addEventListener('input', () => {
             const val = parseInt(numProcInput.value, 10);
-            if (!isNaN(val) && val >= 1 && val <= 8) {
+            if (!isNaN(val) && val >= 1 && val <= 10) {
               renderBurstInputs(val);
             }
             if (typeof numProcInput.animate === 'function') {
