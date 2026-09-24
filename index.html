@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="doc-title">โปรแกรมจำลองการจัดคิวซีพียู - FCFS, SJF & Round Robin</title>
+  <meta name="description" id="doc-meta-desc"
+    content="โปรแกรมจำลองอัลกอริทึมการจัดตารางเวลาซีพียู FCFS, SJF และ Round Robin (AT = 0) สไตล์ Claymorphism ผิวสัมผัสสามมิติ">
+  <!-- Google Fonts: Prompt, Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    (function () {
+      try {
+        let theme = localStorage.getItem('simulator-theme') ||
+          (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (theme !== 'dark') theme = 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body>
+  <main class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand-group">
+        <div class="header-icon-badge" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+            <rect x="9" y="9" width="6" height="6" rx="1.5"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="15" x2="23" y2="15"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="15" x2="4" y2="15"></line>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1 class="main-title" id="main-title">โปรแกรมจำลองการจัดคิวซีพียู</h1>
+          <p class="subtitle"><span id="main-subtitle">FCFS, SJF และ Round Robin</span> <span class="at-pill"
+              id="at-pill">(AT = 0)</span></p>
+        </div>
+      </div>
+
+      <!-- Header Action Controls (Theme Toggle + Language Switcher) -->
+      <div class="header-actions">
+        <!-- Liquid Glass 2-State Theme Switcher (Light / Dark) -->
+        <fieldset class="liquid-theme-switcher" role="radiogroup" aria-label="เลือกธีม / Choose Theme">
+          <legend class="sr-only">เลือกโหมดการแสดงผล</legend>
+          <label class="theme-option" title="โหมดสว่าง / Light Mode">
+            <input class="theme-radio" type="radio" name="theme-mode" value="light" checked aria-label="Light Mode">
+            <svg class="theme-opt-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36" width="20" height="20">
+              <path fill="currentColor" fill-rule="evenodd" d="M18 12a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm0 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" clip-rule="evenodd"></path>
+              <path fill="currentColor" d="M17 6.038a1 1 0 1 1 2 0v3a1 1 0 0 1-2 0v-3ZM24.244 7.742a1 1 0 1 1 1.618 1.176L24.1 11.345a1 1 0 1 1-1.618-1.176l1.763-2.427ZM29.104 13.379a1 1 0 0 1 .618 1.902l-2.854.927a1 1 0 1 1-.618-1.902l2.854-.927ZM29.722 20.795a1 1 0 0 1-.619 1.902l-2.853-.927a1 1 0 1 1 .618-1.902l2.854.927ZM25.862 27.159a1 1 0 0 1-1.618 1.175l-1.763-2.427a1 1 0 1 1 1.618-1.175l1.763 2.427ZM19 30.038a1 1 0 0 1-2 0v-3a1 1 0 1 1 2 0v3ZM11.755 28.334a1 1 0 0 1-1.618-1.175l1.764-2.427a1 1 0 1 1 1.618 1.175l-1.764 2.427ZM6.896 22.697a1 1 0 1 1-.618-1.902l2.853-.927a1 1 0 1 1 .618 1.902l-2.853.927ZM6.278 15.28a1 1 0 1 1 .618-1.901l2.853.927a1 1 0 1 1-.618 1.902l-2.853-.927ZM10.137 8.918a1 1 0 0 1 1.618-1.176l1.764 2.427a1 1 0 0 1-1.618 1.176l-1.764-2.427Z"></path>
+            </svg>
+          </label>
+          <label class="theme-option" title="โหมดมืด / Dark Mode">
+            <input class="theme-radio" type="radio" name="theme-mode" value="dark" aria-label="Dark Mode">
+            <svg class="theme-opt-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36" width="20" height="20">
+              <path fill="currentColor" d="M12.5 8.473a10.968 10.968 0 0 1 8.785-.97 7.435 7.435 0 0 0-3.737 4.672l-.09.373A7.454 7.454 0 0 0 28.732 20.4a10.97 10.97 0 0 1-5.232 7.125l-.497.27c-5.014 2.566-11.175.916-14.234-3.813l-.295-.483C5.53 18.403 7.13 11.93 12.017 8.77l.483-.297Zm4.234.616a8.946 8.946 0 0 0-2.805.883l-.429.234A9 9 0 0 0 10.206 22.5l.241.395A9 9 0 0 0 22.5 25.794l.416-.255a8.94 8.94 0 0 0 2.167-1.99 9.433 9.433 0 0 1-2.782-.313c-5.043-1.352-8.036-6.535-6.686-11.578l.147-.491c.242-.745.573-1.44.972-2.078Z"></path>
+            </svg>
+          </label>
+          <span class="liquid-glider" aria-hidden="true"></span>
+        </fieldset>
+
+        <div class="lang-toggle-group" role="group" aria-label="Language Selector">
+          <span class="lang-txt-label lang-txt-th" id="lang-label-th" role="button" tabindex="0" title="ภาษาไทย">TH</span>
+
+          <label class="clay-toggle-wrap" for="lang-toggle" title="สลับภาษา / Switch Language (TH / EN)">
+            <input type="checkbox" id="lang-toggle" class="clay-toggle-input" aria-label="สลับภาษา ไทย / English">
+            <span class="clay-toggle-track">
+              <span class="clay-toggle-thumb">
+                <!-- Thailand Flag (TH) -->
+                <span class="thumb-flag flag-th">
+                  <svg class="circular-flag" viewBox="0 0 36 36" width="28" height="28" aria-hidden="true">
+                    <defs>
+                      <clipPath id="circle-clip-th">
+                        <circle cx="18" cy="18" r="18" />
+                      </clipPath>
+                    </defs>
+                    <g clip-path="url(#circle-clip-th)">
+                      <rect width="36" height="36" fill="#A51931" />
+                      <rect y="6" width="36" height="24" fill="#F4F5F8" />
+                      <rect y="12" width="36" height="12" fill="#2D2A4A" />
+                    </g>
+                  </svg>
+                </span>
+                <!-- United Kingdom Flag (EN) -->
+                <span class="thumb-flag flag-en">
+                  <svg class="circular-flag" viewBox="0 0 36 36" width="28" height="28" aria-hidden="true">
+                    <defs>
+                      <clipPath id="circle-clip-uk">
+                        <circle cx="18" cy="18" r="18" />
+                      </clipPath>
+                    </defs>
+                    <g clip-path="url(#circle-clip-uk)">
+                      <rect width="36" height="36" fill="#012169" />
+                      <path d="M0,0 L36,36 M36,0 L0,36" stroke="#FFFFFF" stroke-width="6" />
+                      <path d="M0,0 L36,36 M36,0 L0,36" stroke="#C8102E" stroke-width="2.4" />
+                      <path d="M18,0 V36 M0,18 H36" stroke="#FFFFFF" stroke-width="10" />
+                      <path d="M18,0 V36 M0,18 H36" stroke="#C8102E" stroke-width="6" />
+                    </g>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </label>
+
+          <span class="lang-txt-label lang-txt-en" id="lang-label-en" role="button" tabindex="0" title="English">EN</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Simulator Layout -->
+    <div class="sim-grid">
+      <!-- Left / Input Section (Clay Card) -->
+      <section class="clay-card input-card" aria-labelledby="input-heading">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="step-indicator" id="step-1-indicator">1</span>
+            <h2 id="input-heading" class="card-title">กำหนดค่าและเวลาประมวลผล</h2>
+          </div>
+          <span class="badge-status" id="badge-status-at">เวลามาถึง (AT) = 0</span>
+        </div>
+
+        <form id="simulator-form" onsubmit="event.preventDefault();">
+          <!-- Control Row: Number of Processes & Time Quantum (3D Stepper Capsules) -->
+          <div class="control-row">
+            <div class="input-field-group">
+              <label for="num-processes" class="field-label" id="label-num-processes">จำนวนกระบวนการ (Processes)</label>
+              <div class="inset-input-wrapper clay-stepper-capsule" id="wrap-num-processes">
+                <button type="button" class="stepper-btn stepper-btn-dec" id="btn-proc-dec" aria-label="ลดจำนวนกระบวนการ" title="ลดจำนวน (Decrease)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                <div class="stepper-val-wrap">
+                  <input type="number" id="num-processes" class="stepper-input" value="4" min="1" max="8" step="1"
+                    required aria-label="จำนวนกระบวนการ" placeholder="2 - 8">
+                  <span class="stepper-unit" id="unit-num-processes">กระบวนการ</span>
+                </div>
+                <button type="button" class="stepper-btn stepper-btn-inc" id="btn-proc-inc" aria-label="เพิ่มจำนวนกระบวนการ" title="เพิ่มจำนวน (Increase)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="input-field-group">
+              <label for="time-quantum" class="field-label" id="label-time-quantum">
+                <span id="label-tq-text">ควอนตัมเวลา (Time Quantum Q)</span>
+                <span class="label-hint" id="label-hint-rr">สำหรับ Round Robin</span>
+              </label>
+              <div class="inset-input-wrapper clay-stepper-capsule" id="wrap-time-quantum">
+                <button type="button" class="stepper-btn stepper-btn-dec" id="btn-tq-dec" aria-label="ลดควอนตัมเวลา" title="ลดเวลา (Decrease)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                <div class="stepper-val-wrap">
+                  <input type="number" id="time-quantum" class="stepper-input" value="2" min="1" max="20" step="1"
+                    required aria-label="ควอนตัมเวลาสำหรับ Round Robin" placeholder="e.g. 2">
+                  <span class="stepper-unit">ms</span>
+                </div>
+                <button type="button" class="stepper-btn stepper-btn-inc" id="btn-tq-inc" aria-label="เพิ่มควอนตัมเวลา" title="เพิ่มเวลา (Increase)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Burst Time Fields Grid -->
+          <div class="burst-section">
+            <div class="burst-header">
+              <span class="field-label" id="label-burst-times">เวลาประมวลผล (Burst Times - BT) หน่วย ms</span>
+              <span class="burst-note" id="label-burst-note">คลิกที่กล่องเพื่อแก้ไขตัวเลข</span>
+            </div>
+            <div id="burst-inputs-container" class="burst-grid" role="group" aria-label="เวลาประมวลผลของแต่ละกระบวนการ">
+              <!-- Dynamically populated by app.js -->
+            </div>
+          </div>
+
+          <!-- Validation Error Alert Box (Claymorphism Style) -->
+          <div id="validation-alert" class="clay-alert clay-alert-danger" role="alert" aria-live="assertive" style="display: none;">
+            <div class="alert-icon-wrap" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="alert-body">
+              <span class="alert-badge" id="alert-badge-text">ข้อผิดพลาด</span>
+              <p class="alert-message" id="alert-message"></p>
+            </div>
+            <button type="button" class="alert-close-btn" id="btn-close-alert" aria-label="ปิดการแจ้งเตือน" title="ปิด">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="action-buttons-group">
+            <button type="button" id="btn-calculate" class="clay-btn btn-primary" title="คำนวณอัลกอริทึมการจัดคิว">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span id="btn-calculate-text">คำนวณผลลัพธ์</span>
+            </button>
+
+            <button type="button" id="btn-randomize" class="clay-btn btn-secondary" title="สุ่มค่าเวลาประมวลผล (BT)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+                <circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"></circle>
+                <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+                <circle cx="8.5" cy="15.5" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span id="btn-randomize-text">สุ่มค่า BT</span>
+            </button>
+
+            <button type="button" id="btn-reset" class="clay-btn btn-ghost" title="รีเซ็ตเป็นค่าเริ่มต้น">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span id="btn-reset-text">รีเซ็ต</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Zone 2: Simulation Results Section (Full-Width Sequential Flow) -->
+      <section class="clay-card results-card" id="results-section" aria-labelledby="results-heading">
+        <div class="card-header results-header">
+          <div class="card-title-group">
+            <span class="step-indicator">2</span>
+            <h2 id="results-heading" class="card-title">ผลลัพธ์การจำลองการทำงาน</h2>
+          </div>
+
+          <!-- Clay Capsule Tab Switcher (Matches Screenshot 1) -->
+          <nav class="clay-capsule-switcher" role="tablist" aria-label="สลับอัลกอริทึมการจัดคิว">
+            <button type="button" role="tab" id="tab-fcfs" class="capsule-tab active" aria-selected="true"
+              aria-controls="panel-content" data-algorithm="fcfs">
+              FCFS
+            </button>
+            <button type="button" role="tab" id="tab-sjf" class="capsule-tab" aria-selected="false"
+              aria-controls="panel-content" data-algorithm="sjf">
+              SJF
+            </button>
+            <button type="button" role="tab" id="tab-rr" class="capsule-tab" aria-selected="false"
+              aria-controls="panel-content" data-algorithm="rr">
+              Round Robin
+            </button>
+            <span class="capsule-glider" aria-hidden="true"></span>
+          </nav>
+        </div>
+
+        <div id="panel-content" class="results-content-area" role="tabpanel" aria-labelledby="tab-fcfs">
+          <!-- Average Metrics Cards with Calculations & Formulas (Matches Screenshot 1) -->
+          <div class="metrics-row">
+            <!-- Card 1: Average Waiting Time -->
+            <div class="clay-metric-card metric-card-awt">
+              <div class="metric-icon-box icon-box-purple" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="metric-info-wrap">
+                <div class="metric-title-group">
+                  <span class="metric-title-main" id="label-awt-title">AVERAGE WAITING TIME</span>
+                  <span class="metric-title-sub" id="label-awt-sub">(AWT)</span>
+                </div>
+                <div class="metric-value-row">
+                  <span class="metric-num-val" id="avg-waiting-time">10.25</span>
+                  <span class="metric-unit-text" id="unit-awt">ms</span>
+                </div>
+                <div class="metric-calc-formula" id="awt-formula">
+                  (0 + 6 + 14 + 21) / 4 = 10.25 ms
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Average Turnaround Time -->
+            <div class="clay-metric-card metric-card-atat">
+              <div class="metric-icon-box icon-box-green" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <div class="metric-info-wrap">
+                <div class="metric-title-group">
+                  <span class="metric-title-main" id="label-atat-title">AVERAGE TURNAROUND</span>
+                  <span class="metric-title-sub" id="label-atat-sub">TIME (ATAT)</span>
+                </div>
+                <div class="metric-value-row">
+                  <span class="metric-num-val" id="avg-turnaround-time">16.25</span>
+                  <span class="metric-unit-text" id="unit-atat">ms</span>
+                </div>
+                <div class="metric-calc-formula" id="atat-formula">
+                  (6 + 14 + 21 + 24) / 4 = 16.25 ms
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Algorithm Explanation Context Banner -->
+          <div class="algo-explanation-box" id="algo-explanation">
+            <span class="algo-info-icon" aria-hidden="true">💡</span>
+            <p class="algo-info-text" id="algo-info-text">
+              <strong>First-Come, First-Served (FCFS):</strong> กระบวนการที่มาถึงก่อนจะได้รับการประมวลผลก่อนตามลำดับคิว โดยไม่ถูกแทรกกลางคัน (Non-preemptive) เมื่อทุกกระบวนการมาถึงพร้อมกันที่เวลา 0 (AT = 0) ลำดับจะเป็น P1 &rarr; P2 &rarr; P3...
+            </p>
+          </div>
+
+          <!-- Gantt Timeline Visualization -->
+          <div class="gantt-section">
+            <div class="gantt-header">
+              <div class="section-title-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="title-icon">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                <span class="section-heading-text" id="label-gantt-title">แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)</span>
+              </div>
+              <span class="makespan-pill" id="makespan-badge">
+                <span id="label-makespan-text">Total Makespan:</span>
+                <strong id="total-makespan-val">24 ms</strong>
+              </span>
+            </div>
+            <div class="gantt-outer-container">
+              <div id="gantt-chart" class="gantt-chart-bar" role="img"
+                aria-label="แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู">
+                <!-- Rendered dynamically -->
+              </div>
+              <div id="gantt-timestamps" class="gantt-time-labels">
+                <!-- Time marks populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Execution Metrics Table -->
+          <div class="table-section">
+            <div class="table-header-bar">
+              <div class="section-title-wrap">
+                <span class="section-heading-text" id="label-table-title">ตารางวิเคราะห์การทำงานอย่างละเอียด (Detailed Execution Metrics)</span>
+              </div>
+              <span class="formula-hint-badge" id="formula-hint-text">
+                TAT = CT - AT = CT &bull; WT = TAT - BT
+              </span>
+            </div>
+
+            <div class="table-outer-clay">
+              <table class="clay-data-table" id="results-table" aria-label="ตารางผลการคำนวณการจัดคิวของกระบวนการ">
+                <thead>
+                  <tr>
+                    <th scope="col" class="th-process" id="th-process">PROCESS</th>
+                    <th scope="col" id="th-bt">BURST TIME (BT)</th>
+                    <th scope="col" id="th-st">START TIME (ST)</th>
+                    <th scope="col" id="th-ct">COMPLETION / TAT</th>
+                    <th scope="col" id="th-wt">WAITING TIME (WT)</th>
+                    <th scope="col" id="th-status">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="results-table-body">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Glossary & Formula Summary Accordion -->
+          <details class="glossary-accordion" id="glossary-accordion">
+            <summary class="glossary-summary">
+              <div class="glossary-summary-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span id="glossary-summary-title">สรุปคำศัพท์ & สูตรคำนวณ CPU Scheduling (คลิกเพื่อดู)</span>
+              </div>
+              <span class="glossary-chevron" aria-hidden="true">▾</span>
+            </summary>
+            <div class="glossary-grid" id="glossary-grid">
+              <!-- Dynamically populated by app.js -->
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p id="footer-text">ออกแบบด้วยสไตล์ soft Claymorphism aesthetics &bull;
+        โโปรแกรมจำลองการจัดคิวซีพียู (AT = 0)</p>
+    </footer>
+  </main>
+
+  <!-- Lightweight Language Switcher & UI Initializer -->
+  <script>
+    (function () {
+      const i18n = {
+        th: {
+          docTitle: "โปรแกรมจำลองการจัดคิวซีพียู - FCFS, SJF & Round Robin",
+          metaDesc: "โปรแกรมจำลองอัลกอริทึมการจัดตารางเวลาซีพียู FCFS, SJF และ Round Robin (AT = 0) สไตล์ Claymorphism ผิวสัมผัสสามมิติ",
+          mainTitle: "โปรแกรมจำลองการจัดคิวซีพียู",
+          mainSubtitle: "FCFS, SJF และ Round Robin",
+          atPill: "(AT = 0)",
+          themeToggleTitle: "สลับโหมดมืด/สว่าง (Light / Dark Mode)",
+          langGroupAria: "เลือกภาษา (Language Selector)",
+          langToggleTitle: "สลับภาษา / Switch Language (TH / EN)",
+          langToggleAria: "สลับภาษา ไทย / English",
+          inputHeading: "กำหนดค่าและเวลาประมวลผล",
+          badgeStatusAt: "เวลามาถึง (AT) = 0",
+          labelNumProcesses: "จำนวนกระบวนการ (Processes)",
+          processUnit: "กระบวนการ",
+          placeholderNumProc: "2 - 8",
+          labelTqText: "ควอนตัมเวลา (Time Quantum Q)",
+          labelHintRr: "สำหรับ Round Robin",
+          placeholderTq: "เช่น 2",
+          ariaTq: "ควอนตัมเวลาสำหรับ Round Robin",
+          btnDecProcTitle: "ลดจำนวนกระบวนการ",
+          btnIncProcTitle: "เพิ่มจำนวนกระบวนการ",
+          btnDecTqTitle: "ลดควอนตัมเวลา",
+          btnIncTqTitle: "เพิ่มควอนตัมเวลา",
+          labelBurstTimes: "เวลาประมวลผล (Burst Times - BT) หน่วย ms",
+          labelBurstNote: "คลิกที่กล่องเพื่อแก้ไขตัวเลข",
+          ariaBurstGroup: "เวลาประมวลผลของแต่ละกระบวนการ",
+          ariaBurstItem: "เวลาประมวลผล {p}",
+          alertBadgeText: "ข้อผิดพลาด",
+          btnCloseAlertTitle: "ปิดการแจ้งเตือน",
+          btnCalculateText: "คำนวณผลลัพธ์",
+          btnCalculateTitle: "คำนวณอัลกอริทึมการจัดคิว",
+          btnRandomizeText: "สุ่มค่า BT",
+          btnRandomizeTitle: "สุ่มค่าเวลาประมวลผล (BT)",
+          btnResetText: "รีเซ็ต",
+          btnResetTitle: "รีเซ็ตเป็นค่าเริ่มต้น",
+          resultsHeading: "ผลลัพธ์การจำลองการทำงาน",
+          switcherAria: "สลับอัลกอริทึมการจัดคิว",
+          tabFcfsAria: "อัลกอริทึม First-Come, First-Served",
+          tabSjfAria: "อัลกอริทึม Shortest Job First",
+          tabRrAria: "อัลกอริทึม Round Robin",
+          labelAwtTitle: "AVERAGE WAITING TIME",
+          labelAwtSub: "(AWT - เวลารอคอยเฉลี่ย)",
+          labelAtatTitle: "AVERAGE TURNAROUND",
+          labelAtatSub: "TIME (ATAT - เวลาเสร็จสิ้นเฉลี่ย)",
+          labelGanttTitle: "แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)",
+          labelMakespanText: "Total Makespan (เวลารวม):",
+          ganttChartAria: "แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู",
+          labelTableTitle: "ตารางวิเคราะห์การทำงานอย่างละเอียด (Detailed Execution Metrics)",
+          formulaHintText: "TAT = CT - AT = CT • WT = TAT - BT",
+          resultsTableAria: "ตารางผลการคำนวณการจัดคิวของกระบวนการ",
+          thProcess: "PROCESS (โปรเซส)",
+          thBt: "BURST TIME (BT)",
+          thSt: "START TIME (ST)",
+          thCt: "COMPLETION / TAT",
+          thWt: "WAITING TIME (WT)",
+          thStatus: "STATUS (สถานะ)",
+          procLabelPrefix: "กระบวนการ ",
+          statusCompleted: "เสร็จสมบูรณ์",
+          glossarySummaryTitle: "สรุปคำศัพท์ & สูตรคำนวณ CPU Scheduling (คลิกเพื่อดู)",
+          footerText: "ออกแบบด้วยสไตล์ soft Claymorphism aesthetics • โปรแกรมจำลองการจัดคิวซีพียู (AT = 0)",
+          errEmptyProc: "กรุณาระบุจำนวนโปรเซส (Number of Processes)",
+          errInvalidProc: "จำนวนโปรเซสต้องเป็นจำนวนเต็มบวกที่มากกว่า 0 (เช่น 2 - 8)",
+          errMaxProc: "จำนวนโปรเซสสูงสุดไม่เกิน 8 กระบวนการ เพื่อความสมบูรณ์ของแผนภูมิแกนต์และตาราง",
+          errEmptyTq: "กรุณาระบุควอนตัมเวลา (Time Quantum Q) สำหรับ Round Robin",
+          errInvalidTq: "ควอนตัมเวลา (Time Quantum Q) ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
+          errEmptyBt: "กรุณากรอกข้อมูลให้ครบทุกโปรเซส (พบช่องว่างที่ {p})",
+          errInvalidBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
+          glossary: [
+            { term: "Burst Time (BT)", desc: "ระยะเวลาที่กระบวนการต้องใช้ซีพียูในการประมวลผลจนเสร็จสิ้น (หน่วย: ms)" },
+            { term: "Arrival Time (AT = 0)", desc: "เวลาที่กระบวนการเข้าสู่ Ready Queue ในแบบจำลองนี้ทุกโปรเซสมาพร้อมกันที่เวลา 0" },
+            { term: "Start Time (ST)", desc: "จุดเวลาแรกที่กระบวนการเริ่มได้รับซีพียูเข้าทำงาน" },
+            { term: "Completion Time (CT)", desc: "จุดเวลาที่กระบวนการประมวลผลงานทั้งหมดเสร็จสมบูรณ์" },
+            { term: "Waiting Time (WT)", desc: "เวลารอคอยรวมในคิว WT = CT - BT (เมื่อ AT = 0)" },
+            { term: "Turnaround Time (TAT)", desc: "เวลารวมตั้งแต่เข้าคิวจนเสร็จสิ้น TAT = CT (เมื่อ AT = 0)" }
+          ]
+        },
+        en: {
+          docTitle: "CPU Scheduling Simulator - FCFS, SJF & Round Robin",
+          metaDesc: "CPU Scheduling Simulator for FCFS, SJF, and Round Robin (AT = 0) with 3D tactile Claymorphism aesthetics.",
+          mainTitle: "CPU Scheduling Simulator",
+          mainSubtitle: "FCFS, SJF and Round Robin",
+          atPill: "(AT = 0)",
+          themeToggleTitle: "Toggle Theme (Light / Dark Mode)",
+          langGroupAria: "Language Selector",
+          langToggleTitle: "Switch Language (TH / EN)",
+          langToggleAria: "Switch Language Thai / English",
+          inputHeading: "Configuration & Burst Times",
+          badgeStatusAt: "Arrival Time (AT) = 0",
+          labelNumProcesses: "Number of Processes",
+          processUnit: "Processes",
+          placeholderNumProc: "2 - 8",
+          labelTqText: "Time Quantum (Q)",
+          labelHintRr: "For Round Robin",
+          placeholderTq: "e.g. 2",
+          ariaTq: "Time Quantum for Round Robin",
+          btnDecProcTitle: "Decrease number of processes",
+          btnIncProcTitle: "Increase number of processes",
+          btnDecTqTitle: "Decrease time quantum",
+          btnIncTqTitle: "Increase time quantum",
+          labelBurstTimes: "Burst Times (BT) in ms",
+          labelBurstNote: "Click inside box to edit values",
+          ariaBurstGroup: "Burst times for each process",
+          ariaBurstItem: "Burst time for {p}",
+          alertBadgeText: "Validation Error",
+          btnCloseAlertTitle: "Close notification",
+          btnCalculateText: "Calculate",
+          btnCalculateTitle: "Calculate CPU Scheduling Results",
+          btnRandomizeText: "Randomize BT",
+          btnRandomizeTitle: "Randomize Burst Times (BT)",
+          btnResetText: "Reset",
+          btnResetTitle: "Reset to Default Values",
+          resultsHeading: "Simulation Results",
+          switcherAria: "Select CPU Scheduling Algorithm",
+          tabFcfsAria: "First-Come, First-Served Algorithm",
+          tabSjfAria: "Shortest Job First Algorithm",
+          tabRrAria: "Round Robin Algorithm",
+          labelAwtTitle: "AVERAGE WAITING TIME",
+          labelAwtSub: "(AWT)",
+          labelAtatTitle: "AVERAGE TURNAROUND",
+          labelAtatSub: "TIME (ATAT)",
+          labelGanttTitle: "Gantt Timeline Visualization",
+          labelMakespanText: "Total Makespan:",
+          ganttChartAria: "Gantt timeline chart displaying CPU execution sequence",
+          labelTableTitle: "Detailed Execution Metrics",
+          formulaHintText: "TAT = CT - AT = CT • WT = TAT - BT",
+          resultsTableAria: "Detailed metrics table for CPU processes",
+          thProcess: "PROCESS",
+          thBt: "BURST TIME (BT)",
+          thSt: "START TIME (ST)",
+          thCt: "COMPLETION / TAT",
+          thWt: "WAITING TIME (WT)",
+          thStatus: "STATUS",
+          procLabelPrefix: "Process ",
+          statusCompleted: "Completed",
+          glossarySummaryTitle: "Glossary & Formulas (Click to expand)",
+          footerText: "Crafted with soft Claymorphism aesthetics • Instantaneous CPU Scheduling Simulator (AT = 0)",
+          errEmptyProc: "Please enter the number of processes.",
+          errInvalidProc: "Number of processes must be a positive integer greater than 0 (e.g. 2 - 8).",
+          errMaxProc: "Maximum allowed number of processes is 8 for optimal chart rendering.",
+          errEmptyTq: "Please enter the Time Quantum (Q) for Round Robin.",
+          errInvalidTq: "Time Quantum (Q) must be a positive integer greater than 0.",
+          errEmptyBt: "Please fill in Burst Time for all processes (missing at {p}).",
+          errInvalidBt: "Burst Time for {p} must be a positive integer greater than 0.",
+          glossary: [
+            { term: "Burst Time (BT)", desc: "The total duration of CPU execution required by a process to finish (unit: ms)." },
+            { term: "Arrival Time (AT = 0)", desc: "The timestamp a process enters the ready queue. In this simulator, all processes arrive at t = 0." },
+            { term: "Start Time (ST)", desc: "The very first timestamp when the CPU starts executing the process." },
+            { term: "Completion Time (CT)", desc: "The timestamp at which the process finishes its entire execution." },
+            { term: "Waiting Time (WT)", desc: "Total duration spent waiting in the ready queue. WT = CT - BT (when AT = 0)." },
+            { term: "Turnaround Time (TAT)", desc: "Total elapsed time from arrival to completion: TAT = CT (when AT = 0)." }
+          ]
+        }
+      };
+
+      function updateLanguage(lang) {
+        const t = i18n[lang] || i18n.th;
+        window.currentLanguage = lang;
+        document.documentElement.lang = lang;
+        try { localStorage.setItem('simulator-lang', lang); } catch (e) {}
+
+        const textMap = {
+          'main-title': t.mainTitle,
+          'main-subtitle': t.mainSubtitle,
+          'at-pill': t.atPill,
+          'input-heading': t.inputHeading,
+          'badge-status-at': t.badgeStatusAt,
+          'label-num-processes': t.labelNumProcesses,
+          'unit-num-processes': t.processUnit,
+          'label-tq-text': t.labelTqText,
+          'label-hint-rr': t.labelHintRr,
+          'label-burst-times': t.labelBurstTimes,
+          'label-burst-note': t.labelBurstNote,
+          'btn-calculate-text': t.btnCalculateText,
+          'btn-randomize-text': t.btnRandomizeText,
+          'btn-reset-text': t.btnResetText,
+          'results-heading': t.resultsHeading,
+          'label-awt-title': t.labelAwtTitle,
+          'label-awt-sub': t.labelAwtSub,
+          'label-atat-title': t.labelAtatTitle,
+          'label-atat-sub': t.labelAtatSub,
+          'label-gantt-title': t.labelGanttTitle,
+          'label-makespan-text': t.labelMakespanText,
+          'label-table-title': t.labelTableTitle,
+          'formula-hint-text': t.formulaHintText,
+          'th-process': t.thProcess,
+          'th-bt': t.thBt,
+          'th-st': t.thSt,
+          'th-ct': t.thCt,
+          'th-wt': t.thWt,
+          'th-status': t.thStatus,
+          'glossary-summary-title': t.glossarySummaryTitle,
+          'footer-text': t.footerText,
+          'alert-badge-text': t.alertBadgeText
+        };
+
+        Object.entries(textMap).forEach(([id, val]) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val;
+        });
+
+        document.title = t.docTitle;
+        const metaDescEl = document.getElementById('doc-meta-desc');
+        if (metaDescEl) metaDescEl.setAttribute('content', t.metaDesc);
+
+        // Synchronize ARIA & Titles
+        const themeSwitcher = document.querySelector('.liquid-theme-switcher');
+        if (themeSwitcher) {
+          themeSwitcher.setAttribute('aria-label', lang === 'en' ? 'Choose Theme' : 'เลือกธีม / Choose Theme');
+          const optLight = themeSwitcher.querySelector('.theme-option:nth-of-type(1)');
+          const optDark = themeSwitcher.querySelector('.theme-option:nth-of-type(2)');
+          if (optLight) optLight.title = lang === 'en' ? 'Light Mode' : 'โหมดสว่าง (Light)';
+          if (optDark) optDark.title = lang === 'en' ? 'Dark Mode' : 'โหมดมืด (Dark)';
+        }
+
+        const langGroup = document.querySelector('.lang-toggle-group');
+        if (langGroup) langGroup.setAttribute('aria-label', t.langGroupAria);
+
+        const langWrap = document.querySelector('.clay-toggle-wrap');
+        if (langWrap) langWrap.title = t.langToggleTitle;
+
+        const langInput = document.getElementById('lang-toggle');
+        if (langInput) {
+          langInput.setAttribute('aria-label', t.langToggleAria);
+          if (langInput.checked !== (lang === 'en')) {
+            langInput.checked = (lang === 'en');
+          }
+        }
+
+        const numProcInp = document.getElementById('num-processes');
+        if (numProcInp) {
+          numProcInp.setAttribute('aria-label', t.labelNumProcesses);
+          numProcInp.placeholder = t.placeholderNumProc;
+        }
+
+        const tqInp = document.getElementById('time-quantum');
+        if (tqInp) {
+          tqInp.setAttribute('aria-label', t.ariaTq);
+          tqInp.placeholder = t.placeholderTq;
+        }
+
+        const btnProcDec = document.getElementById('btn-proc-dec');
+        if (btnProcDec) {
+          btnProcDec.title = t.btnDecProcTitle;
+          btnProcDec.setAttribute('aria-label', t.btnDecProcTitle);
+        }
+        const btnProcInc = document.getElementById('btn-proc-inc');
+        if (btnProcInc) {
+          btnProcInc.title = t.btnIncProcTitle;
+          btnProcInc.setAttribute('aria-label', t.btnIncProcTitle);
+        }
+        const btnTqDec = document.getElementById('btn-tq-dec');
+        if (btnTqDec) {
+          btnTqDec.title = t.btnDecTqTitle;
+          btnTqDec.setAttribute('aria-label', t.btnDecTqTitle);
+        }
+        const btnTqInc = document.getElementById('btn-tq-inc');
+        if (btnTqInc) {
+          btnTqInc.title = t.btnIncTqTitle;
+          btnTqInc.setAttribute('aria-label', t.btnIncTqTitle);
+        }
+
+        const burstContainer = document.getElementById('burst-inputs-container');
+        if (burstContainer) burstContainer.setAttribute('aria-label', t.ariaBurstGroup);
+
+        document.querySelectorAll('.burst-number-input').forEach((inp, idx) => {
+          inp.setAttribute('aria-label', t.ariaBurstItem.replace('{p}', `P${idx + 1}`));
+        });
+
+        document.querySelectorAll('.burst-pill-card').forEach((card, idx) => {
+          const p = idx + 1;
+          const dec = card.querySelector('.bt-btn-dec');
+          const inc = card.querySelector('.bt-btn-inc');
+          const decTitle = lang === 'en' ? `Decrease BT for P${p} (Hold to repeat)` : `ลดเวลาประมวลผล P${p} (กดค้างได้)`;
+          const incTitle = lang === 'en' ? `Increase BT for P${p} (Hold to repeat)` : `เพิ่มเวลาประมวลผล P${p} (กดค้างได้)`;
+          if (dec) { dec.title = decTitle; dec.setAttribute('aria-label', decTitle); }
+          if (inc) { inc.title = incTitle; inc.setAttribute('aria-label', incTitle); }
+        });
+
+        const btnCloseAlert = document.getElementById('btn-close-alert');
+        if (btnCloseAlert) {
+          btnCloseAlert.title = t.btnCloseAlertTitle;
+          btnCloseAlert.setAttribute('aria-label', t.btnCloseAlertTitle);
+        }
+
+        const btnCalc = document.getElementById('btn-calculate');
+        if (btnCalc) btnCalc.title = t.btnCalculateTitle;
+
+        const btnRand = document.getElementById('btn-randomize');
+        if (btnRand) btnRand.title = t.btnRandomizeTitle;
+
+        const btnReset = document.getElementById('btn-reset');
+        if (btnReset) btnReset.title = t.btnResetTitle;
+
+        const tabSwitcher = document.querySelector('.clay-capsule-switcher');
+        if (tabSwitcher) tabSwitcher.setAttribute('aria-label', t.switcherAria);
+
+        const tabFcfs = document.getElementById('tab-fcfs');
+        if (tabFcfs) tabFcfs.setAttribute('aria-label', t.tabFcfsAria);
+
+        const tabSjf = document.getElementById('tab-sjf');
+        if (tabSjf) tabSjf.setAttribute('aria-label', t.tabSjfAria);
+
+        const tabRr = document.getElementById('tab-rr');
+        if (tabRr) tabRr.setAttribute('aria-label', t.tabRrAria);
+
+        const gantt = document.getElementById('gantt-chart');
+        if (gantt) gantt.setAttribute('aria-label', t.ganttChartAria);
+
+        const resTable = document.getElementById('results-table');
+        if (resTable) resTable.setAttribute('aria-label', t.resultsTableAria);
+
+        // Re-translate active error message in real time if visible
+        if (window.activeValidationError) {
+          const alertEl = document.getElementById('validation-alert');
+          if (alertEl && alertEl.style.display !== 'none') {
+            let msg = t[window.activeValidationError.key] || window.activeValidationError.message;
+            if (window.activeValidationError.param) {
+              Object.entries(window.activeValidationError.param).forEach(([k, v]) => {
+                msg = msg.replace(`{${k}}`, v);
+              });
+            }
+            const msgEl = document.getElementById('alert-message');
+            if (msgEl) msgEl.textContent = msg;
+          }
+        }
+
+        // Update active algorithm meta text & table rows
+        const activeTab = document.querySelector('.capsule-tab.active');
+        const currentAlgoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
+        if (typeof renderAlgorithmPreview === 'function') {
+          renderAlgorithmPreview(currentAlgoKey);
+        }
+
+        // Glossary Items
+        const glossaryGrid = document.getElementById('glossary-grid');
+        if (glossaryGrid) {
+          glossaryGrid.innerHTML = '';
+          t.glossary.forEach(g => {
+            const div = document.createElement('div');
+            div.className = 'glossary-item';
+            div.innerHTML = `<span class="glossary-term">${g.term}</span><span class="glossary-desc">${g.desc}</span>`;
+            glossaryGrid.appendChild(div);
+          });
+        }
+
+        if (typeof updateCapsuleGlider === 'function') {
+          updateCapsuleGlider(false);
+        }
+      }
+
+      /* ==========================================================================
+         Validation & Error UI Management
+         ========================================================================== */
+      function clearInputErrors() {
+        document.querySelectorAll('.input-field-error').forEach(el => el.classList.remove('input-field-error'));
+      }
+
+      function highlightError(element) {
+        if (!element) return;
+        const wrapper = element.closest('.inset-input-wrapper') || element.closest('.burst-pill-card') || element;
+        wrapper.classList.add('input-field-error');
+        element.focus();
+      }
+
+      function showValidationError(errorKeyOrMsg, offendingInput, param) {
+        const lang = window.currentLanguage || 'th';
+        const t = i18n[lang] || i18n.th;
+
+        let key = null;
+        let message = '';
+        if (typeof errorKeyOrMsg === 'object' && errorKeyOrMsg !== null) {
+          key = errorKeyOrMsg.key;
+          param = errorKeyOrMsg.param || param || {};
+          message = t[key] || errorKeyOrMsg.message || '';
+          if (!offendingInput && errorKeyOrMsg.input) {
+            offendingInput = errorKeyOrMsg.input;
+          }
+        } else if (t[errorKeyOrMsg]) {
+          key = errorKeyOrMsg;
+          message = t[key];
+        } else {
+          message = errorKeyOrMsg;
+        }
+
+        if (param) {
+          Object.entries(param).forEach(([k, v]) => {
+            message = message.replace(`{${k}}`, v);
+          });
+        }
+
+        window.activeValidationError = { key, param, message, input: offendingInput };
+
+        const alertEl = document.getElementById('validation-alert');
+        const msgEl = document.getElementById('alert-message');
+        if (msgEl) msgEl.textContent = message;
+        if (alertEl) {
+          alertEl.style.display = 'flex';
+          // Trigger shake animation reflow
+          alertEl.style.animation = 'none';
+          void alertEl.offsetWidth;
+          alertEl.style.animation = '';
+        }
+        if (offendingInput) {
+          highlightError(offendingInput);
+        }
+      }
+
+      function hideValidationError() {
+        window.activeValidationError = null;
+        const alertEl = document.getElementById('validation-alert');
+        if (alertEl) alertEl.style.display = 'none';
+        clearInputErrors();
+      }
+
+      function validateSchedulingInputs() {
+        const lang = window.currentLanguage || 'th';
+        const t = i18n[lang] || i18n.th;
+        clearInputErrors();
+
+        const numProcInput = document.getElementById('num-processes');
+        const tqInput = document.getElementById('time-quantum');
+        const burstContainer = document.getElementById('burst-inputs-container');
+
+        // 1. ตรวจสอบการไม่กรอกจำนวนโปรเซส (Empty process count)
+        const numProcVal = numProcInput ? numProcInput.value.trim() : '';
+        if (numProcVal === '') {
+          return { isValid: false, key: 'errEmptyProc', message: t.errEmptyProc, input: numProcInput };
+        }
+
+        // 2. ตรวจสอบจำนวนโปรเซสเป็น 0 หรือติดลบ หรือไม่ใช่จำนวนเต็ม (<= 0 or not integer)
+        const numProc = Number(numProcVal);
+        if (isNaN(numProc) || !Number.isInteger(numProc) || numProc <= 0) {
+          return { isValid: false, key: 'errInvalidProc', message: t.errInvalidProc, input: numProcInput };
+        }
+
+        if (numProc > 8) {
+          return { isValid: false, key: 'errMaxProc', message: t.errMaxProc, input: numProcInput };
+        }
+
+        // 3. ตรวจสอบ Time Quantum ไม่ใช่จำนวนเต็มบวก (<= 0 or not integer or empty)
+        const tqVal = tqInput ? tqInput.value.trim() : '';
+        if (tqVal === '') {
+          return { isValid: false, key: 'errEmptyTq', message: t.errEmptyTq, input: tqInput };
+        }
+        const tq = Number(tqVal);
+        if (isNaN(tq) || !Number.isInteger(tq) || tq <= 0) {
+          return { isValid: false, key: 'errInvalidTq', message: t.errInvalidTq, input: tqInput };
+        }
+
+        // 4 & 5. ตรวจสอบเวลาประมวลผล (Burst Time) ของแต่ละโปรเซส
+        const burstInputs = burstContainer ? burstContainer.querySelectorAll('.burst-number-input') : [];
+        if (burstInputs.length === 0) {
+          return { isValid: false, key: 'errEmptyProc', message: t.errEmptyProc, input: numProcInput };
+        }
+
+        const validBurstTimes = [];
+        for (let i = 0; i < burstInputs.length; i++) {
+          const inp = burstInputs[i];
+          const pName = `P${i + 1}`;
+          const val = inp.value.trim();
+
+          // 4. กรอกข้อมูลไม่ครบทุกโปรเซส (Empty field)
+          if (val === '') {
+            return {
+              isValid: false,
+              key: 'errEmptyBt',
+              param: { p: pName },
+              message: t.errEmptyBt.replace('{p}', pName),
+              input: inp
+            };
+          }
+
+          // 5. Burst Time ไม่ใช่จำนวนเต็มบวก (<= 0 or not integer or NaN)
+          const bt = Number(val);
+          if (isNaN(bt) || !Number.isInteger(bt) || bt <= 0) {
+            return {
+              isValid: false,
+              key: 'errInvalidBt',
+              param: { p: pName },
+              message: t.errInvalidBt.replace('{p}', pName),
+              input: inp
+            };
+          }
+
+          validBurstTimes.push(bt);
+        }
+
+        return {
+          isValid: true,
+          data: {
+            numProcesses: numProc,
+            timeQuantum: tq,
+            burstTimes: validBurstTimes
+          }
+        };
+      }
+
+      /* ==========================================================================
+         Algorithm Specifications & Dynamic Visualization Datasets
+         ========================================================================== */
+      const algoData = {
+        fcfs: {
+          badge: 'FCFS',
+          name: 'First-Come, First-Served (FCFS)',
+          descTh: '<strong>First-Come, First-Served (FCFS):</strong> กระบวนการที่มาถึงก่อนจะได้รับการประมวลผลก่อนตามลำดับคิว โดยไม่ถูกแทรกกลางคัน (Non-preemptive) เมื่อทุกกระบวนการมาถึงพร้อมกันที่เวลา 0 (AT = 0) ลำดับการประมวลผลจะเป็น P1 &rarr; P2 &rarr; P3 &rarr; P4',
+          descEn: '<strong>First-Come, First-Served (FCFS):</strong> The process that arrives first is executed first until completion without preemption. Since all processes arrive at time 0 (AT = 0), execution strictly follows the order P1 &rarr; P2 &rarr; P3 &rarr; P4.',
+          awt: '10.25',
+          awtFormula: '(0 + 6 + 14 + 21) / 4 = 10.25 ms',
+          atat: '16.25',
+          atatFormula: '(6 + 14 + 21 + 24) / 4 = 16.25 ms',
+          makespan: '24 ms',
+          blocks: [
+            { id: 1, name: 'P1', dur: 6 },
+            { id: 2, name: 'P2', dur: 8 },
+            { id: 3, name: 'P3', dur: 7 },
+            { id: 4, name: 'P4', dur: 3 }
+          ],
+          stamps: [0, 6, 14, 21, 24],
+          rows: [
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 6, wt: 0 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 6, ct: 14, wt: 6 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 14, ct: 21, wt: 14 },
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 21, ct: 24, wt: 21 }
+          ]
+        },
+        sjf: {
+          badge: 'SJF',
+          name: 'Shortest Job First (SJF - Non-Preemptive)',
+          descTh: '<strong>Shortest Job First (SJF - Non-Preemptive):</strong> อัลกอริทึมเลือกประมวลผลโปรเซสที่มี Burst Time สั้นที่สุดก่อน (P4 &rarr; P1 &rarr; P3 &rarr; P2) เพื่อลดเวลารอคอยเฉลี่ย (AWT) ให้เหลือน้อยที่สุด',
+          descEn: '<strong>Shortest Job First (SJF - Non-Preemptive):</strong> Prioritizes processes with the shortest burst time first (P4 &rarr; P1 &rarr; P3 &rarr; P2) to minimize average waiting time.',
+          awt: '7.00',
+          awtFormula: '(0 + 3 + 9 + 16) / 4 = 7.00 ms',
+          atat: '13.00',
+          atatFormula: '(3 + 9 + 16 + 24) / 4 = 13.00 ms',
+          makespan: '24 ms',
+          blocks: [
+            { id: 4, name: 'P4', dur: 3 },
+            { id: 1, name: 'P1', dur: 6 },
+            { id: 3, name: 'P3', dur: 7 },
+            { id: 2, name: 'P2', dur: 8 }
+          ],
+          stamps: [0, 3, 9, 16, 24],
+          rows: [
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 0, ct: 3, wt: 0 },
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 3, ct: 9, wt: 3 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 9, ct: 16, wt: 9 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 16, ct: 24, wt: 16 }
+          ]
+        },
+        rr: {
+          badge: 'RR',
+          name: 'Round Robin (RR)',
+          descTh: '<strong>Round Robin (RR):</strong> จัดสรรเวลาการทำงานตาม Time Quantum (Q = 2) สลับสับเปลี่ยนคิวหมุนเวียนอย่างเท่าเทียมกันแบบ Preemptive',
+          descEn: '<strong>Round Robin (RR):</strong> Cyclic execution sharing CPU time equally using Time Quantum slices (Q = 2) with preemption.',
+          awt: '13.75',
+          awtFormula: '(11 + 15 + 17 + 12) / 4 = 13.75 ms',
+          atat: '19.75',
+          atatFormula: '(17 + 23 + 24 + 15) / 4 = 19.75 ms',
+          makespan: '24 ms',
+          blocks: [
+            { id: 1, name: 'P1', dur: 2 },
+            { id: 2, name: 'P2', dur: 2 },
+            { id: 3, name: 'P3', dur: 2 },
+            { id: 4, name: 'P4', dur: 2 },
+            { id: 1, name: 'P1', dur: 2 },
+            { id: 2, name: 'P2', dur: 2 },
+            { id: 3, name: 'P3', dur: 2 },
+            { id: 4, name: 'P4', dur: 1 },
+            { id: 1, name: 'P1', dur: 2 },
+            { id: 2, name: 'P2', dur: 2 },
+            { id: 3, name: 'P3', dur: 2 },
+            { id: 2, name: 'P2', dur: 2 },
+            { id: 3, name: 'P3', dur: 1 }
+          ],
+          stamps: [0, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 24],
+          rows: [
+            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 17, wt: 11 },
+            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 2, ct: 23, wt: 15 },
+            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 4, ct: 24, wt: 17 },
+            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 6, ct: 15, wt: 12 }
+          ]
+        }
+      };
+
+      function updateAlgoInfoText(algoKey, lang) {
+        const item = algoData[algoKey] || algoData.fcfs;
+        const currentLang = lang || window.currentLanguage || 'th';
+        const infoEl = document.getElementById('algo-info-text');
+        if (infoEl) {
+          infoEl.innerHTML = currentLang === 'en' ? item.descEn : item.descTh;
+        }
+      }
+
+      function renderAlgorithmPreview(algoKey) {
+        const item = algoData[algoKey] || algoData.fcfs;
+        updateAlgoInfoText(algoKey);
+
+        const awtEl = document.getElementById('avg-waiting-time');
+        const atatEl = document.getElementById('avg-turnaround-time');
+        const awtFormulaEl = document.getElementById('awt-formula');
+        const atatFormulaEl = document.getElementById('atat-formula');
+        const makespanEl = document.getElementById('total-makespan-val');
+
+        if (awtEl) awtEl.textContent = item.awt;
+        if (atatEl) atatEl.textContent = item.atat;
+        if (awtFormulaEl) awtFormulaEl.textContent = item.awtFormula;
+        if (atatFormulaEl) atatFormulaEl.textContent = item.atatFormula;
+        if (makespanEl) makespanEl.textContent = item.makespan;
+
+        // Render Gantt
+        const gantt = document.getElementById('gantt-chart');
+        const stamps = document.getElementById('gantt-timestamps');
+        if (gantt) {
+          gantt.innerHTML = '';
+          const totalMakespan = item.stamps[item.stamps.length - 1] || 24;
+          item.blocks.forEach(b => {
+            const div = document.createElement('div');
+            div.className = `gantt-block block-p${b.id}`;
+            div.style.flex = `${b.dur} 0 auto`;
+            div.innerHTML = `
+              <div class="gantt-block-label">
+                <span class="gantt-proc-name">${b.name}</span>
+                <span class="gantt-proc-dur">${b.dur} ms</span>
+              </div>
+            `;
+            gantt.appendChild(div);
+          });
+
+          if (stamps) {
+            stamps.innerHTML = '';
+            item.stamps.forEach(t => {
+              const sp = document.createElement('span');
+              sp.className = 'gantt-mark';
+              sp.style.left = `${(t / totalMakespan) * 100}%`;
+              sp.textContent = t;
+              stamps.appendChild(sp);
+            });
+          }
+        }
+
+        // Render Table
+        const tbody = document.getElementById('results-table-body');
+        if (tbody) {
+          tbody.innerHTML = '';
+          const currentLang = window.currentLanguage || 'th';
+          const t = i18n[currentLang] || i18n.th;
+          item.rows.forEach(r => {
+            const tr = document.createElement('tr');
+            const procLabel = `${t.procLabelPrefix}${r.id}`;
+            const statusLabel = t.statusCompleted;
+            tr.innerHTML = `
+              <td>
+                <div class="table-proc-cell">
+                  <span class="process-badge badge-p${r.id}">${r.name}</span>
+                  <span class="proc-cell-name">${procLabel}</span>
+                </div>
+              </td>
+              <td><strong>${r.bt}</strong> <span class="unit-text">ms</span></td>
+              <td>${r.st} <span class="unit-text">ms</span></td>
+              <td><span class="ct-highlight">${r.ct}</span> <span class="unit-text">ms</span></td>
+              <td><span class="wt-pill">${r.wt}</span> <span class="unit-text">ms</span></td>
+              <td><span class="status-pill-completed">${statusLabel}</span></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      }
+
+      function attachHoldRepeat(btn, onStep, onStop) {
+        if (!btn) return;
+        let timer = null;
+        let interval = null;
+        let isHolding = false;
+        let didRepeat = false;
+
+        const start = (e) => {
+          if (e.type === 'mousedown' && e.button !== 0) return;
+          if (btn.disabled) return;
+          e.preventDefault();
+          isHolding = true;
+          didRepeat = false;
+
+          onStep(false);
+
+          clearTimeout(timer);
+          clearInterval(interval);
+
+          timer = setTimeout(() => {
+            if (!isHolding || btn.disabled) return;
+            didRepeat = true;
+            interval = setInterval(() => {
+              if (!isHolding || btn.disabled) {
+                clearInterval(interval);
+                return;
+              }
+              onStep(true);
+            }, 65);
+          }, 320);
+        };
+
+        const stop = () => {
+          if (!isHolding) return;
+          isHolding = false;
+          clearTimeout(timer);
+          clearInterval(interval);
+          if (typeof onStop === 'function') {
+            onStop(didRepeat);
+          }
+        };
+
+        btn.addEventListener('mousedown', start);
+        btn.addEventListener('touchstart', start, { passive: false });
+        btn.addEventListener('mouseup', stop);
+        btn.addEventListener('mouseleave', stop);
+        btn.addEventListener('touchend', stop);
+        btn.addEventListener('touchcancel', stop);
+      }
+
+      function renderBurstInputs(count) {
+        const burstWrap = document.getElementById('burst-inputs-container');
+        if (!burstWrap) return;
+        const currentInputs = burstWrap.querySelectorAll('.burst-number-input');
+        const existingValues = [];
+        currentInputs.forEach(inp => existingValues.push(inp.value));
+
+        const currentLang = window.currentLanguage || 'th';
+        const t = i18n[currentLang] || i18n.th;
+
+        burstWrap.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+          const defaultVal = (existingValues[i - 1] !== undefined && existingValues[i - 1] !== '')
+            ? existingValues[i - 1]
+            : ([6, 8, 7, 3, 5, 4, 9, 2][i - 1] || (Math.floor(Math.random() * 8) + 2));
+
+          const card = document.createElement('div');
+          card.className = 'burst-pill-card burst-card-enter';
+          card.style.animationDelay = `${(i - 1) * 35}ms`;
+          const itemAria = (t.ariaBurstItem || 'Burst time for {p}').replace('{p}', `P${i}`);
+          const decTitle = currentLang === 'en' ? `Decrease BT for P${i} (Hold to repeat)` : `ลดเวลาประมวลผล P${i} (กดค้างได้)`;
+          const incTitle = currentLang === 'en' ? `Increase BT for P${i} (Hold to repeat)` : `เพิ่มเวลาประมวลผล P${i} (กดค้างได้)`;
+
+          card.innerHTML = `
+            <span class="process-badge badge-p${i}">P${i}</span>
+            <div class="bt-stepper-wrap" id="wrap-bt-${i}">
+              <button type="button" class="bt-btn bt-btn-dec" id="btn-bt-dec-${i}" aria-label="${decTitle}" title="${decTitle}">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <input type="number" class="burst-number-input" value="${defaultVal}" min="1" max="99" id="bt-input-${i}" aria-label="${itemAria}">
+              <button type="button" class="bt-btn bt-btn-inc" id="btn-bt-inc-${i}" aria-label="${incTitle}" title="${incTitle}">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </div>
+          `;
+          burstWrap.appendChild(card);
+
+          // Wire hold-to-repeat on BT buttons
+          const inp = card.querySelector('.burst-number-input');
+          const btnDec = card.querySelector('.bt-btn-dec');
+          const btnInc = card.querySelector('.bt-btn-inc');
+
+          if (btnDec && inp) {
+            attachHoldRepeat(btnDec, (isRapid) => {
+              let val = parseInt(inp.value, 10);
+              if (isNaN(val) || val <= 1) val = 1;
+              if (val > 1) {
+                inp.value = val - 1;
+                if (!isRapid) {
+                  if (typeof animateCounter === 'function') animateCounter(inp, 'down');
+                } else if (typeof inp.animate === 'function') {
+                  inp.animate([
+                    { transform: 'translateY(-2px)' },
+                    { transform: 'translateY(0)' }
+                  ], { duration: 60 });
+                }
+              }
+            }, (didRepeat) => {
+              if (didRepeat && typeof animateCounter === 'function') {
+                animateCounter(inp, 'down');
+              }
+            });
+          }
+
+          if (btnInc && inp) {
+            attachHoldRepeat(btnInc, (isRapid) => {
+              let val = parseInt(inp.value, 10);
+              if (isNaN(val) || val < 1) val = 1;
+              if (val < 99) {
+                inp.value = val + 1;
+                if (!isRapid) {
+                  if (typeof animateCounter === 'function') animateCounter(inp, 'up');
+                } else if (typeof inp.animate === 'function') {
+                  inp.animate([
+                    { transform: 'translateY(2px)' },
+                    { transform: 'translateY(0)' }
+                  ], { duration: 60 });
+                }
+              }
+            }, (didRepeat) => {
+              if (didRepeat && typeof animateCounter === 'function') {
+                animateCounter(inp, 'up');
+              }
+            });
+          }
+        }
+      }
+
+      function initSamplePreview() {
+        renderBurstInputs(4);
+        renderAlgorithmPreview('fcfs');
+      }
+
+      function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('simulator-theme', theme); } catch (e) {}
+        const radio = document.querySelector(`.theme-radio[value="${theme}"]`);
+        if (radio) radio.checked = true;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Theme from localStorage or OS preference
+        let savedTheme = 'light';
+        try {
+          savedTheme = localStorage.getItem('simulator-theme') ||
+            (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        } catch (e) {}
+        if (savedTheme !== 'dark') savedTheme = 'light';
+        setTheme(savedTheme);
+
+        // 2-State Liquid Glass Theme Switcher Listeners
+        document.querySelectorAll('.theme-radio').forEach(radio => {
+          radio.addEventListener('change', () => {
+            if (radio.checked) setTheme(radio.value);
+          });
+        });
+
+        // Initialize Language from localStorage
+        let savedLang = 'th';
+        try {
+          savedLang = localStorage.getItem('simulator-lang') || 'th';
+        } catch (e) {}
+
+        const toggle = document.getElementById('lang-toggle');
+        if (toggle) {
+          toggle.checked = (savedLang === 'en');
+          toggle.addEventListener('change', (e) => {
+            updateLanguage(e.target.checked ? 'en' : 'th');
+          });
+        }
+
+        const labelTh = document.getElementById('lang-label-th');
+        if (labelTh) {
+          const selectTh = () => {
+            if (toggle) toggle.checked = false;
+            updateLanguage('th');
+          };
+          labelTh.addEventListener('click', selectTh);
+          labelTh.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectTh();
+            }
+          });
+        }
+
+        const labelEn = document.getElementById('lang-label-en');
+        if (labelEn) {
+          const selectEn = () => {
+            if (toggle) toggle.checked = true;
+            updateLanguage('en');
+          };
+          labelEn.addEventListener('click', selectEn);
+          labelEn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectEn();
+            }
+          });
+        }
+
+        initSamplePreview();
+        updateLanguage(savedLang);
+
+        // Liquid Glass Capsule Switcher Glider
+        const tabs = document.querySelectorAll('.capsule-tab');
+        const capsuleGlider = document.querySelector('.capsule-glider');
+
+        function updateCapsuleGlider(instant = false) {
+          const activeTab = document.querySelector('.capsule-tab.active');
+          if (activeTab && capsuleGlider) {
+            if (instant) {
+              capsuleGlider.style.transition = 'none';
+            }
+            capsuleGlider.style.transform = `translate(${activeTab.offsetLeft}px, ${activeTab.offsetTop}px)`;
+            capsuleGlider.style.width = `${activeTab.offsetWidth}px`;
+            capsuleGlider.style.height = `${activeTab.offsetHeight}px`;
+            capsuleGlider.classList.add('ready');
+            if (instant) {
+              void capsuleGlider.offsetHeight;
+              capsuleGlider.style.transition = '';
+            }
+          }
+        }
+
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            tabs.forEach(t => {
+              t.classList.remove('active');
+              t.setAttribute('aria-selected', 'false');
+            });
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            updateCapsuleGlider(false);
+
+            const algoKey = tab.getAttribute('data-algorithm') || 'fcfs';
+
+            // If app.js provides custom calculation runner, delegate to it
+            if (typeof window.runSchedulingAlgorithm === 'function') {
+              window.runSchedulingAlgorithm(algoKey);
+            } else {
+              renderAlgorithmPreview(algoKey);
+            }
+          });
+        });
+
+        // Initialize Liquid Glider Position
+        updateCapsuleGlider(true);
+        window.addEventListener('resize', () => updateCapsuleGlider(true));
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => updateCapsuleGlider(true));
+        }
+
+        // Animated Counter & Micro-Interactions
+        function animateCounter(element, direction = 'up') {
+          if (!element) return;
+          const isUp = direction === 'up';
+          if (typeof element.animate === 'function') {
+            element.animate([
+              {
+                transform: isUp ? 'translateY(16px) scale(0.82)' : 'translateY(-16px) scale(0.82)',
+                opacity: 0,
+                filter: 'blur(2.5px)'
+              },
+              {
+                transform: isUp ? 'translateY(-2.5px) scale(1.06)' : 'translateY(2.5px) scale(1.06)',
+                opacity: 1,
+                filter: 'blur(0)',
+                offset: 0.65
+              },
+              {
+                transform: 'translateY(0) scale(1)',
+                opacity: 1
+              }
+            ], {
+              duration: 320,
+              easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+            });
+          } else {
+            const cls = isUp ? 'counter-anim-up' : 'counter-anim-down';
+            element.classList.remove('counter-anim-up', 'counter-anim-down');
+            void element.offsetWidth;
+            element.classList.add(cls);
+            setTimeout(() => element.classList.remove(cls), 350);
+          }
+        }
+
+        function triggerCapsulePulse(capsuleEl, type = 'inc') {
+          if (!capsuleEl) return;
+          const cls = type === 'inc' ? 'stepper-capsule-pulse-inc' : 'stepper-capsule-pulse-dec';
+          capsuleEl.classList.remove('stepper-capsule-pulse-inc', 'stepper-capsule-pulse-dec');
+          void capsuleEl.offsetWidth;
+          capsuleEl.classList.add(cls);
+          setTimeout(() => capsuleEl.classList.remove(cls), 420);
+        }
+
+        // 3D Stepper Controls & Synchronization
+        const numProcInput = document.getElementById('num-processes');
+        const tqInput = document.getElementById('time-quantum');
+        const wrapProc = document.getElementById('wrap-num-processes');
+        const wrapTq = document.getElementById('wrap-time-quantum');
+        const btnProcDec = document.getElementById('btn-proc-dec');
+        const btnProcInc = document.getElementById('btn-proc-inc');
+        const btnTqDec = document.getElementById('btn-tq-dec');
+        const btnTqInc = document.getElementById('btn-tq-inc');
+
+        function updateStepperButtons() {
+          if (numProcInput && btnProcDec && btnProcInc) {
+            const val = parseInt(numProcInput.value, 10);
+            btnProcDec.disabled = (val <= 1);
+            btnProcInc.disabled = (val >= 8);
+          }
+
+          if (tqInput && btnTqDec && btnTqInc) {
+            const val = parseInt(tqInput.value, 10);
+            btnTqDec.disabled = (val <= 1);
+            btnTqInc.disabled = (val >= 20);
+          }
+        }
+
+        if (btnProcDec && numProcInput) {
+          attachHoldRepeat(btnProcDec, (isRapid) => {
+            let val = parseInt(numProcInput.value, 10) || 4;
+            if (val > 1) {
+              val = val - 1;
+              numProcInput.value = val;
+              if (!isRapid) animateCounter(numProcInput, 'down');
+              triggerCapsulePulse(wrapProc, 'dec');
+              renderBurstInputs(val);
+              updateStepperButtons();
+            }
+          }, (didRepeat) => {
+            if (didRepeat) animateCounter(numProcInput, 'down');
+          });
+        }
+
+        if (btnProcInc && numProcInput) {
+          attachHoldRepeat(btnProcInc, (isRapid) => {
+            let val = parseInt(numProcInput.value, 10) || 4;
+            if (val < 8) {
+              val = val + 1;
+              numProcInput.value = val;
+              if (!isRapid) animateCounter(numProcInput, 'up');
+              triggerCapsulePulse(wrapProc, 'inc');
+              renderBurstInputs(val);
+              updateStepperButtons();
+            }
+          }, (didRepeat) => {
+            if (didRepeat) animateCounter(numProcInput, 'up');
+          });
+        }
+
+        if (btnTqDec && tqInput) {
+          attachHoldRepeat(btnTqDec, (isRapid) => {
+            let val = parseInt(tqInput.value, 10) || 2;
+            if (val > 1) {
+              tqInput.value = val - 1;
+              if (!isRapid) animateCounter(tqInput, 'down');
+              triggerCapsulePulse(wrapTq, 'dec');
+              updateStepperButtons();
+            }
+          }, (didRepeat) => {
+            if (didRepeat) animateCounter(tqInput, 'down');
+          });
+        }
+
+        if (btnTqInc && tqInput) {
+          attachHoldRepeat(btnTqInc, (isRapid) => {
+            let val = parseInt(tqInput.value, 10) || 2;
+            if (val < 20) {
+              tqInput.value = val + 1;
+              if (!isRapid) animateCounter(tqInput, 'up');
+              triggerCapsulePulse(wrapTq, 'inc');
+              updateStepperButtons();
+            }
+          }, (didRepeat) => {
+            if (didRepeat) animateCounter(tqInput, 'up');
+          });
+        }
+
+        if (numProcInput) {
+          numProcInput.addEventListener('input', () => {
+            const val = parseInt(numProcInput.value, 10);
+            if (!isNaN(val) && val >= 1 && val <= 8) {
+              renderBurstInputs(val);
+            }
+            if (typeof numProcInput.animate === 'function') {
+              numProcInput.animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.12)', offset: 0.5 },
+                { transform: 'scale(1)' }
+              ], { duration: 180, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+            }
+            updateStepperButtons();
+          });
+        }
+
+        if (tqInput) {
+          tqInput.addEventListener('input', () => {
+            if (typeof tqInput.animate === 'function') {
+              tqInput.animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.12)', offset: 0.5 },
+                { transform: 'scale(1)' }
+              ], { duration: 180, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+            }
+            updateStepperButtons();
+          });
+        }
+
+        // Delegated input listener for Burst Times container
+        const burstWrap = document.getElementById('burst-inputs-container');
+        if (burstWrap) {
+          burstWrap.addEventListener('input', (e) => {
+            if (e.target && e.target.classList.contains('burst-number-input')) {
+              if (typeof e.target.animate === 'function') {
+                e.target.animate([
+                  { transform: 'scale(1)' },
+                  { transform: 'scale(1.12)', offset: 0.5 },
+                  { transform: 'scale(1)' }
+                ], { duration: 180, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+              }
+            }
+          });
+        }
+
+        document.querySelectorAll('.stepper-val-wrap').forEach(wrap => {
+          wrap.addEventListener('click', (e) => {
+            const inp = wrap.querySelector('.stepper-input');
+            if (inp && e.target !== inp) inp.focus();
+          });
+        });
+
+        updateStepperButtons();
+
+        // Alert Close Button
+        const closeAlertBtn = document.getElementById('btn-close-alert');
+        if (closeAlertBtn) {
+          closeAlertBtn.addEventListener('click', hideValidationError);
+        }
+
+        // Calculate Button with Validation & Smooth Scrolling
+        const btnCalc = document.getElementById('btn-calculate');
+        if (btnCalc) {
+          btnCalc.addEventListener('click', () => {
+            const result = validateSchedulingInputs();
+            if (!result.isValid) {
+              showValidationError(result, result.input);
+              return;
+            }
+            hideValidationError();
+
+            // Run active algorithm if app.js is hooked
+            const activeTab = document.querySelector('.capsule-tab.active');
+            const algoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
+            if (typeof window.runSchedulingAlgorithm === 'function') {
+              window.runSchedulingAlgorithm(algoKey);
+            } else {
+              renderAlgorithmPreview(algoKey);
+            }
+
+            // Smooth glide down to Simulation Results (Zone 2)
+            const resultsSection = document.getElementById('results-section');
+            if (resultsSection) {
+              resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        }
+
+        // Randomize BT Button with Cascade Slot Machine Roll
+        const btnRand = document.getElementById('btn-randomize');
+        if (btnRand) {
+          btnRand.addEventListener('click', () => {
+            hideValidationError();
+
+            // Tactile rotation animation on dice icon
+            const icon = btnRand.querySelector('svg');
+            if (icon && typeof icon.animate === 'function') {
+              icon.animate([
+                { transform: 'rotate(0deg) scale(1)' },
+                { transform: 'rotate(180deg) scale(1.22)', offset: 0.5 },
+                { transform: 'rotate(360deg) scale(1)' }
+              ], { duration: 420, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+            }
+
+            const inputs = document.querySelectorAll('.burst-number-input');
+            if (!inputs.length) return;
+
+            btnRand.style.pointerEvents = 'none';
+            setTimeout(() => { btnRand.style.pointerEvents = ''; }, inputs.length * 45 + 380);
+
+            inputs.forEach((inp, idx) => {
+              const targetVal = Math.floor(Math.random() * 12) + 2;
+              const delay = idx * 45; // Staggered cascade from P1 to Pn
+
+              setTimeout(() => {
+                let ticks = 0;
+                const maxTicks = 5;
+                const tickInterval = setInterval(() => {
+                  ticks++;
+                  if (ticks < maxTicks) {
+                    inp.value = Math.floor(Math.random() * 14) + 1;
+                    if (typeof inp.animate === 'function') {
+                      inp.animate([
+                        { transform: 'translateY(-6px) scale(0.92)', opacity: 0.6, filter: 'blur(2px)' },
+                        { transform: 'translateY(0) scale(1)', opacity: 1, filter: 'blur(0)' }
+                      ], { duration: 60, easing: 'ease-out' });
+                    }
+                  } else {
+                    clearInterval(tickInterval);
+                    inp.value = targetVal;
+
+                    // Final settling Spring Jelly Pop
+                    if (typeof inp.animate === 'function') {
+                      inp.animate([
+                        { transform: 'translateY(12px) scale(0.82)', opacity: 0.4, filter: 'blur(1.5px)' },
+                        { transform: 'translateY(-3.5px) scale(1.2)', opacity: 1, filter: 'blur(0)', offset: 0.6 },
+                        { transform: 'translateY(0) scale(1)', opacity: 1 }
+                      ], { duration: 320, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+                    }
+
+                    const card = inp.closest('.burst-pill-card');
+                    if (card) {
+                      card.classList.remove('burst-card-pop');
+                      void card.offsetWidth;
+                      card.classList.add('burst-card-pop');
+                      setTimeout(() => card.classList.remove('burst-card-pop'), 420);
+                    }
+                  }
+                }, 50);
+              }, delay);
+            });
+          });
+        }
+
+        // Reset Button with Animated Reset Transition
+        const btnReset = document.getElementById('btn-reset');
+        if (btnReset) {
+          btnReset.addEventListener('click', () => {
+            hideValidationError();
+            if (numProcInput) {
+              numProcInput.value = 4;
+              animateCounter(numProcInput, 'down');
+            }
+            if (tqInput) {
+              tqInput.value = 2;
+              animateCounter(tqInput, 'down');
+            }
+            renderBurstInputs(4);
+            renderAlgorithmPreview('fcfs');
+            const fcfsTab = document.getElementById('tab-fcfs');
+            if (fcfsTab) {
+              tabs.forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+              });
+              fcfsTab.classList.add('active');
+              fcfsTab.setAttribute('aria-selected', 'true');
+              updateCapsuleGlider(false);
+            }
+            updateStepperButtons();
+          });
+        }
+
+        // Expose global APIs for algorithm developer (app.js)
+        window.validateSchedulingInputs = validateSchedulingInputs;
+        window.showValidationError = showValidationError;
+        window.hideValidationError = hideValidationError;
+        window.clearInputErrors = clearInputErrors;
+        window.renderAlgorithmPreview = renderAlgorithmPreview;
+        window.updateLanguage = updateLanguage;
+        window.updateCapsuleGlider = updateCapsuleGlider;
+        window.animateCounter = animateCounter;
+        window.triggerCapsulePulse = triggerCapsulePulse;
+        window.attachHoldRepeat = attachHoldRepeat;
+      });
+    })();
+  </script>
+
+  <script src="app.js" defer></script>
+</body>
+
+</html>
