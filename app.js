@@ -294,6 +294,10 @@
     // 3. เก็บผลลัพธ์ล่าสุดไว้ แล้วเรนเดอร์ลง UI ของหน้าเว็บ
     lastResult = result;
     renderSimulationToUI(result);
+
+    // ผลลัพธ์ใหม่แล้ว → เอาสถานะ "ผลลัพธ์เก่า" ออก (ถ้ามี)
+    const panelContent = document.getElementById('panel-content');
+    if (panelContent) panelContent.classList.remove('is-stale');
   }
 
   /**

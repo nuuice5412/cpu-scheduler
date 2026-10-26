@@ -1171,6 +1171,43 @@ body {
   gap: 24px;
 }
 
+/* คำอธิบายใต้การ์ดสรุป: บอกว่าตัวเลขมาจากการคำนวณครั้งล่าสุด */
+.results-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.results-hint::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--clay-purple);
+  transition: background 0.2s ease;
+}
+
+/* สถานะ "ผลลัพธ์เก่า": ผู้ใช้แก้ค่าแต่ยังไม่กดคำนวณ → ลดความเด่นของผลลัพธ์ */
+#panel-content.is-stale .metrics-row,
+#panel-content.is-stale .algo-explanation-box,
+#panel-content.is-stale .gantt-section,
+#panel-content.is-stale .table-section {
+  opacity: 0.55;
+}
+#panel-content .metrics-row,
+#panel-content .algo-explanation-box,
+#panel-content .gantt-section,
+#panel-content .table-section {
+  transition: opacity 0.2s ease;
+}
+#panel-content.is-stale .results-hint::before {
+  background: #F59E0B; /* ส้ม = ต้องคำนวณใหม่ */
+}
+
 /* ==========================================================================
    Average Metrics Cards (Formula & Calculations Display - Reference Design)
    ========================================================================== */

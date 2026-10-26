@@ -331,6 +331,9 @@
             </div>
           </div>
 
+          <!-- คำอธิบายสถานะผลลัพธ์ (ข้อความมาจาก i18n) -->
+          <p class="results-hint" id="results-hint"></p>
+
           <!-- Algorithm Explanation Context Banner -->
           <div class="algo-explanation-box" id="algo-explanation">
             <span class="algo-info-icon" aria-hidden="true">💡</span>
@@ -488,6 +491,7 @@
           labelAwtSub: "(AWT - เวลารอคอยเฉลี่ย)",
           labelAtatTitle: "AVERAGE TURNAROUND",
           labelAtatSub: "TIME (ATAT - เวลาเสร็จสิ้นเฉลี่ย)",
+          resultsHint: "ผลลัพธ์จากการคำนวณครั้งล่าสุด — เมื่อแก้ไขค่า กด “คำนวณผลลัพธ์” อีกครั้ง",
           labelGanttTitle: "แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)",
           labelMakespanText: "Total Makespan (เวลารวม):",
           ganttChartAria: "แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู",
@@ -569,6 +573,7 @@
           labelAwtSub: "(AWT)",
           labelAtatTitle: "AVERAGE TURNAROUND",
           labelAtatSub: "TIME (ATAT)",
+          resultsHint: "Results from the last calculation — press “Calculate” again after editing any value.",
           labelGanttTitle: "Gantt Timeline Visualization",
           labelMakespanText: "Total Makespan:",
           ganttChartAria: "Gantt timeline chart displaying CPU execution sequence",
@@ -647,6 +652,7 @@
           'label-awt-sub': t.labelAwtSub,
           'label-atat-title': t.labelAtatTitle,
           'label-atat-sub': t.labelAtatSub,
+          'results-hint': t.resultsHint,
           'label-gantt-title': t.labelGanttTitle,
           'label-makespan-text': t.labelMakespanText,
           'label-table-title': t.labelTableTitle,
@@ -1013,6 +1019,15 @@
        * ตัวเลขบนหน้าจอต้องคำนวณจากค่าที่ผู้ใช้กรอกเสมอ (ไม่มีข้อมูลตัวอย่าง hardcode แล้ว)
        * @param {string} algoKey 'fcfs' | 'sjf' | 'rr'
        */
+      /**
+       * ทำเครื่องหมายว่าผลลัพธ์บนจอ "เก่าแล้ว" (ผู้ใช้แก้ค่าแต่ยังไม่กดคำนวณ)
+       * จะไปลดความเด่นของการ์ดสรุป/Gantt/ตาราง และเปลี่ยนจุดสีในคำอธิบายเป็นสีส้ม
+       */
+      function markResultsStale() {
+        const panel = document.getElementById('panel-content');
+        if (panel) panel.classList.add('is-stale');
+      }
+
       function renderResultsFor(algoKey) {
         if (typeof window.runSchedulingAlgorithm !== 'function') {
           console.warn('[CPU Simulator] app.js ยังไม่ถูกโหลด — ไม่สามารถคำนวณผลลัพธ์ได้');
@@ -1573,6 +1588,18 @@
           simForm.addEventListener('submit', (e) => {
             e.preventDefault();
             handleCalculate();
+          });
+        }
+
+        // ทำเครื่องหมาย "ผลลัพธ์เก่า" เมื่อผู้ใช้เปลี่ยนค่า
+        //   - input: พิมพ์ตัวเลขในช่องใด ๆ ของฟอร์ม
+        //   - click: กดปุ่ม stepper (+/−) หรือปุ่มสุ่มค่า BT (ปุ่มที่ถูก disable จะไม่ยิง click)
+        if (simForm) {
+          simForm.addEventListener('input', markResultsStale);
+          simForm.addEventListener('click', (e) => {
+            if (e.target.closest && e.target.closest('.stepper-btn, .bt-btn, #btn-randomize')) {
+              markResultsStale();
+            }
           });
         }
 
