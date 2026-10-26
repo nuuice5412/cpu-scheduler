@@ -2,6 +2,16 @@
 
 An interactive, responsive CPU-scheduling simulator built with vanilla HTML/CSS/JS and soft **Claymorphism** aesthetics. FCFS, SJF and Round Robin run on the numbers you enter and are visualised with a proportional Gantt timeline, a full metrics table and step-by-step formula breakdowns — under the uniform arrival-time condition **(AT = 0)**.
 
+🔗 **Live demo:** <https://nuuice5412.github.io/cpu-scheduler/>
+
+---
+
+## 📸 Screenshots
+
+| Light theme — FCFS | Dark theme — Round Robin (13 slices) |
+| :---: | :---: |
+| ![Simulator in light mode showing FCFS results](docs/screenshot-light.png) | ![Simulator in dark mode showing Round Robin results](docs/screenshot-dark.png) |
+
 ---
 
 ## ✨ Key Features
@@ -77,6 +87,7 @@ cpu-scheduler/
 ├── index.html            # markup, bilingual i18n dictionaries, UI interaction
 ├── styles.css            # claymorphism tokens, dark theme, responsive + print styles
 ├── app.js                # scheduling engine (FCFS, SJF, RR) + DOM rendering
+├── docs/                 # screenshots used by this README
 ├── tests/
 │   ├── engine.spec.js    # the 51 assertions, shared by both runners
 │   ├── engine.test.js    # command-line runner (Node.js)
