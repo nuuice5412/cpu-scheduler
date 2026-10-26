@@ -1,17 +1,10 @@
 /**
  * CPU Scheduling Simulator - Algorithm Engine (app.js)
  * 
- * รองรับ 3 อัลกอริทึมตามข้อกำหนด (AT = 0):
+ * อัลกอริทึมการจัดตารางเวลาซีพียู (AT = 0):
  * 1. FCFS (First-Come, First-Served)
  * 2. SJF (Shortest Job First - Non-Preemptive)
  * 3. Round Robin (RR - Preemptive ตาม Time Quantum)
- * 
- * ปรับปรุงและแก้ไขจากโค้ดตั้งต้น:
- * - ตัด mock data, console.log และ priority ที่ไม่ได้ใช้งานออก
- * - กำหนดเงื่อนไข AT = 0 (ทุก Process มาพร้อมกันที่เวลา 0)
- * - แก้ไขตรรกะ Round Robin ให้บันทึก Gantt Blocks / Timestamps สำหรับวาด Timeline กราฟ
- * - ปรับปรุงการคำนวณ AWT (Average Waiting Time) และ ATAT (Average Turnaround Time)
- * - เชื่อมต่อกับระบบ UI ของ index.html ผ่าน window.runSchedulingAlgorithm
  */
 
 (function () {
