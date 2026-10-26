@@ -79,6 +79,7 @@ cpu-scheduler/
 ├── app.js                # scheduling engine (FCFS, SJF, RR) + DOM rendering
 ├── tests/
 │   └── engine.test.js    # engine regression tests (Node, no dependencies)
+├── package.json          # only a `test` script — no dependencies to install
 └── README.md
 ```
 
@@ -105,8 +106,23 @@ python -m http.server 8000
 The engine has no DOM dependencies, so it can be tested straight from Node — no framework, no `npm install`:
 
 ```bash
+# run from the project root (the folder that contains index.html)
 node tests/engine.test.js
 ```
+
+Or, if you are already inside `tests/`:
+
+```bash
+node engine.test.js
+```
+
+Or via npm (works because the project has no dependencies, so there is nothing to install):
+
+```bash
+npm test
+```
+
+> The path in the command is resolved from your **current directory**. Running `node tests/engine.test.js` from inside `tests/` looks for `tests/tests/engine.test.js` and fails with `Cannot find module`.
 
 Expected output (51 assertions):
 

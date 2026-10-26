@@ -1,0 +1,9 @@
+{
+  "name": "cpu-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CPU scheduling simulator (FCFS / SJF / Round Robin, AT = 0)",
+  "scripts": {
+    "test": "node tests/engine.test.js"
+  }
+}
