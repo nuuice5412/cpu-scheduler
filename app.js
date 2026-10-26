@@ -1,10 +1,17 @@
 /**
- * CPU Scheduling Simulator - Algorithm Engine (app.js)
- * 
- * อัลกอริทึมการจัดตารางเวลาซีพียู (AT = 0):
- * 1. FCFS (First-Come, First-Served)
- * 2. SJF (Shortest Job First - Non-Preemptive)
- * 3. Round Robin (RR - Preemptive ตาม Time Quantum)
+ * CPU Scheduling Simulator — app.js
+ *
+ * ⚠️ ขอบเขตของไฟล์นี้ (อ่านก่อนแก้)
+ *   1. Core Scheduling Algorithms — สูตรคำนวณ FCFS / SJF / RR  (บทบาทที่ 1)
+ *   2. Result Formatting ......... แปลงผลเป็น rows / blocks / stamps + ค่าเฉลี่ย
+ *   3. DOM Rendering ............. runSchedulingAlgorithm() + renderSimulationToUI()
+ *   4. Exports ................... ผูกฟังก์ชันให้ index.html เรียกใช้ผ่าน window.*
+ *
+ * จุดเชื่อมกับ UI (ถ้าจะแก้การแสดงผล ให้เริ่มที่ 2 ฟังก์ชันนี้)
+ *   - runSchedulingAlgorithm(algoKey)  ← อ่านค่าจาก DOM แล้วเรียก calculate*
+ *   - renderSimulationToUI(result)     ← วาดการ์ดสรุป / Gantt / ตาราง 8 คอลัมน์
+ *
+ * อัลกอริทึม (AT = 0): FCFS, SJF (non-preemptive), Round Robin (ตาม Time Quantum)
  */
 
 (function () {
@@ -247,7 +254,11 @@
    * @param {string} algoKey ('fcfs' | 'sjf' | 'rr')
    */
   function runSchedulingAlgorithm(algoKey) {
-    const selectedAlgo = algoKey || (document.querySelector('.capsule-tab.active') ? document.querySelector('.capsule-tab.active').getAttribute('data-algorithm') : 'fcfs') || 'fcfs';
+    // ลำดับความสำคัญ: อัลกอริทึมที่ส่งมา → แท็บที่ active อยู่ → FCFS
+    const activeTab = document.querySelector('.capsule-tab.active');
+    const selectedAlgo = algoKey
+      || (activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs')
+      || 'fcfs';
 
     // 1. ตรวจสอบและดึงข้อมูลจากหน้าเว็บ
     const burstInputs = document.querySelectorAll('.burst-number-input');

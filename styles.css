@@ -1,6 +1,20 @@
 /* ==========================================================================
-   CLAYMORPHISM DESIGN SYSTEM & STYLESHEET (OPTIMIZED & CONCISE)
-   CPU Scheduling Simulator
+   CLAYMORPHISM DESIGN SYSTEM — CPU Scheduling Simulator
+
+   ── แผนที่ไฟล์ (แก้ตรงไหน) ──────────────────────────────────────────────
+    1. สี / เงา / รัศมี / ฟอนต์ ........... :root (ด้านล่าง)
+    2. ธีมสว่าง–มืด ....................... [data-theme="dark"] (ท้ายไฟล์)
+    3. Header + สวิตช์ธีม + สวิตช์ภาษา .... .app-header / .liquid-theme-switcher / .lang-toggle-group
+    4. การ์ด / ฟอร์ม / stepper ............ .clay-card / .inset-input-wrapper / .clay-stepper-capsule
+    5. บัตร Burst Time + สี P1–P10 ........ .burst-pill-card / .badge-p1…p10
+    6. ปุ่ม / กล่องแจ้งเตือน .............. .clay-btn / .clay-alert
+    7. แท็บอัลกอริทึม ..................... .clay-capsule-switcher / .capsule-tab
+    8. การ์ดสรุป + คำอธิบายอัลกอริทึม ..... .clay-metric-card / .algo-explanation-box
+    9. Gantt + ตารางผลลัพธ์ ............... .gantt-* / .clay-data-table
+   10. Glossary / Footer .................. .glossary-* / .app-footer
+   11. Responsive + Print ................. @media (max-width: 580px) / @media print
+
+   หลักการ: สีและเงาทั้งหมดมาจากตัวแปร → เปลี่ยนธีมได้จาก :root จุดเดียว
    ========================================================================== */
 
 :root {
@@ -26,10 +40,22 @@
   --clay-yellow: #FBBF24;
   --clay-green: #34D399;
 
-  /* Clay Shadows Tokens */
-  --clay-card-shadow: 16px 20px 38px rgba(166, 175, 195, 0.38), -10px -10px 24px rgba(255, 255, 255, 0.95), inset 4px 4px 8px rgba(255, 255, 255, 0.95), inset -4px -4px 8px rgba(163, 177, 198, 0.22);
-  --clay-card-hover: 18px 24px 44px rgba(166, 175, 195, 0.42), -10px -10px 24px rgba(255, 255, 255, 0.95), inset 4px 4px 8px rgba(255, 255, 255, 0.95), inset -4px -4px 8px rgba(163, 177, 198, 0.22);
-  --clay-card-subtle: 10px 14px 28px rgba(166, 175, 195, 0.3), -8px -8px 20px rgba(255, 255, 255, 0.95), inset 3px 3px 6px rgba(255, 255, 255, 0.9), inset -3px -3px 6px rgba(163, 177, 198, 0.2);
+  /* Clay Shadows Tokens — เงาซ้อน 4 ชั้น (นอก 2 + ใน 2) ทำให้ผิวดูนูน */
+  --clay-card-shadow:
+    16px 20px 38px rgba(166, 175, 195, 0.38),
+    -10px -10px 24px rgba(255, 255, 255, 0.95),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.95),
+    inset -4px -4px 8px rgba(163, 177, 198, 0.22);
+  --clay-card-hover:
+    18px 24px 44px rgba(166, 175, 195, 0.42),
+    -10px -10px 24px rgba(255, 255, 255, 0.95),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.95),
+    inset -4px -4px 8px rgba(163, 177, 198, 0.22);
+  --clay-card-subtle:
+    10px 14px 28px rgba(166, 175, 195, 0.3),
+    -8px -8px 20px rgba(255, 255, 255, 0.95),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.9),
+    inset -3px -3px 6px rgba(163, 177, 198, 0.2);
   --clay-inset-shadow: inset 3px 3px 7px rgba(163, 177, 198, 0.4), inset -3px -3px 7px rgba(255, 255, 255, 0.95);
   --clay-inset-deep: inset 4px 4px 8px rgba(163, 177, 198, 0.45), inset -4px -4px 8px rgba(255, 255, 255, 0.95);
 
@@ -1281,14 +1307,46 @@ body {
   gap: 6px;
 }
 .makespan-pill strong { color: var(--clay-purple-dark); }
+/* กรอบนอกของ Gantt: เลื่อนแนวนอนได้เมื่อมีหลายช่วงเวลา */
 .gantt-outer-container {
-  background: var(--bg-inset); border-radius: 20px; padding: 18px 20px 14px; box-shadow: var(--clay-inset-shadow); overflow-x: auto;
+  background: var(--bg-inset);
+  border-radius: 20px;
+  padding: 18px 20px 14px;
+  box-shadow: var(--clay-inset-shadow);
+  overflow-x: auto;
 }
+
+/* แถบ Gantt: JS กำหนด gridTemplateColumns = "<dur>fr …" ตามสัดส่วนเวลาจริง
+   ไม่มี gap เพื่อให้ขอบบล็อกตรงกับตัวเลข timestamp ด้านล่าง */
 .gantt-chart-bar {
-  display: grid; grid-auto-flow: column; width: 100%; min-width: 440px; height: 52px; gap: 0; position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  width: 100%;
+  min-width: 440px;
+  height: 52px;
+  gap: 0;
+  position: relative;
 }
+
 .gantt-block {
-  height: 100%; min-width: 0; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; cursor: default; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -2px -2px 4px rgba(0, 0, 0, 0.08); position: relative; overflow: hidden; user-select: none;
+  height: 100%;
+  min-width: 0; /* กันไม่ให้ content ดันความกว้างจนสัดส่วนเพี้ยน */
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: default;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.7),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
 }
 .gantt-block:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.05); z-index: 2; }
 .gantt-block-label {
@@ -1366,14 +1424,32 @@ body {
   overflow-x: auto;
 }
 .clay-data-table {
-  width: 100%; border-collapse: separate; border-spacing: 0 6px; text-align: left;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  text-align: left;
 }
+
+/* หัวตาราง: ถ้าเพิ่มคอลัมน์ใหม่ ต้องแก้ thead ใน index.html + i18n thAt/thBt/... ด้วย */
 .clay-data-table th {
-  padding: 12px 16px; font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); border-bottom: 2px solid var(--bg-inset);
+  padding: 12px 16px;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--bg-inset);
 }
 .clay-data-table th.th-process { padding-left: 20px; }
+
 .clay-data-table td {
-  padding: 14px 16px; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-card-alt); transition: background 0.15s ease, box-shadow 0.15s ease;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background: var(--bg-card-alt);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 .clay-data-table tr td:first-child { border-top-left-radius: 14px; border-bottom-left-radius: 14px; padding-left: 20px; }
 .clay-data-table tr td:last-child { border-top-right-radius: 14px; border-bottom-right-radius: 14px; }
@@ -1438,7 +1514,14 @@ body {
    Algorithm Info & Accordion
    ========================================================================== */
 .algo-explanation-box {
-  background: var(--bg-inset); border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--clay-inset-shadow); border: 1px solid rgba(255, 255, 255, 0.6);
+  background: var(--bg-inset);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: var(--clay-inset-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 .algo-info-icon { font-size: 1.25rem; line-height: 1; flex-shrink: 0; margin-top: 1px; }
 .algo-info-text { font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); }
@@ -1450,7 +1533,18 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.8); overflow: hidden; transition: box-shadow 0.25s ease;
 }
 .glossary-summary {
-  display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; cursor: pointer; user-select: none; font-family: var(--font-heading); font-weight: 700; font-size: 0.92rem; color: var(--text-main); list-style: none; transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  list-style: none;
+  transition: background 0.15s ease;
 }
 .glossary-summary::-webkit-details-marker { display: none; }
 .glossary-summary:hover { background: rgba(255, 255, 255, 0.6); }

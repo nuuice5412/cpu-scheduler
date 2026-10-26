@@ -376,6 +376,10 @@
             </div>
 
             <div class="table-outer-clay">
+              <!-- ตาราง 8 คอลัมน์ — ถ้าเพิ่ม/แก้คอลัมน์ ต้องแก้ 3 ที่
+                   1) <thead> ด้านล่าง
+                   2) app.js → renderSimulationToUI() ส่วนที่สร้าง <tr>
+                   3) i18n (thAt / thBt / …) + textMap ในสคริปต์ท้ายไฟล์ -->
               <table class="clay-data-table" id="results-table" aria-label="ตารางผลการคำนวณการจัดคิวของกระบวนการ">
                 <thead>
                   <tr>
@@ -425,7 +429,20 @@
     </footer>
   </main>
 
-  <!-- Lightweight Language Switcher & UI Initializer -->
+  <!-- ======================================================================
+       UI CONTROLLER (inline script)
+       แผนที่โค้ดในไฟล์นี้ — จะแก้อะไรให้ไปตรงไหน
+        1. i18n ............. พจนานุกรม 2 ภาษา (ข้อความ + aria ทั้งหมด)
+        2. simText() ........ ให้ app.js ดึงข้อความภาษาเดียวกับ UI
+        3. updateLanguage() . แปลหน้าจอ แล้วสั่งคำนวณใหม่ด้วยข้อมูลเดิม
+        4. Validation ....... highlightError / showValidationError / hideValidationError / validateSchedulingInputs
+        5. Render helper .... renderResultsFor() → เรียก engine ใน app.js
+        6. Input builders ... attachHoldRepeat() / renderBurstInputs() / initBurstInputs()
+        7. Tabs ............. activateTab() + คีย์บอร์ดลูกศร
+        8. Init ............. DOMContentLoaded: ธีม → ภาษา → ผูกปุ่มทั้งหมด
+
+       หลักการ: UI ห้ามคำนวณสูตรเอง — เรียกผ่าน renderResultsFor() เท่านั้น
+       ====================================================================== -->
   <script>
     (function () {
       const i18n = {
