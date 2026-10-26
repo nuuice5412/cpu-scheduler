@@ -4,6 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F4F5FA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0D0F18" media="(prefers-color-scheme: dark)">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%238B5CF6'/%3E%3Crect x='8' y='8' width='8' height='8' rx='2' fill='%23FFFFFF'/%3E%3C/svg%3E">
   <title id="doc-title">โปรแกรมจำลองการจัดคิวซีพียู - FCFS, SJF & Round Robin</title>
   <meta name="description" id="doc-meta-desc"
     content="โปรแกรมจำลองอัลกอริทึมการจัดตารางเวลาซีพียู FCFS, SJF และ Round Robin (AT = 0) สไตล์ Claymorphism ผิวสัมผัสสามมิติ">
@@ -27,6 +32,13 @@
 </head>
 
 <body>
+  <noscript>
+    <p
+      style="margin:0 0 16px;padding:12px 16px;border-radius:12px;background:#FEF3C7;color:#92400E;font-weight:600;text-align:center;">
+      โปรแกรมจำลองนี้ต้องใช้ JavaScript — กรุณาเปิด JavaScript ในเบราว์เซอร์แล้วโหลดหน้าใหม่ /
+      This simulator requires JavaScript. Please enable it and reload.
+    </p>
+  </noscript>
   <main class="app-container">
     <!-- Header -->
     <header class="app-header">
@@ -134,7 +146,7 @@
           <span class="badge-status" id="badge-status-at">เวลามาถึง (AT) = 0</span>
         </div>
 
-        <form id="simulator-form" onsubmit="event.preventDefault();">
+        <form id="simulator-form" novalidate autocomplete="off">
           <!-- Control Row: Number of Processes & Time Quantum (3D Stepper Capsules) -->
           <div class="control-row">
             <div class="input-field-group">
@@ -209,7 +221,7 @@
 
           <!-- Action Buttons Bar -->
           <div class="action-buttons-group">
-            <button type="button" id="btn-calculate" class="clay-btn btn-primary" title="คำนวณอัลกอริทึมการจัดคิว">
+            <button type="submit" id="btn-calculate" class="clay-btn btn-primary" title="คำนวณอัลกอริทึมการจัดคิว">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
@@ -250,17 +262,17 @@
           </div>
 
           <!-- Clay Capsule Tab Switcher (Matches Screenshot 1) -->
-          <nav class="clay-capsule-switcher" role="tablist" aria-label="สลับอัลกอริทึมการจัดคิว">
+          <nav class="clay-capsule-switcher" id="algo-tablist" role="tablist" aria-label="สลับอัลกอริทึมการจัดคิว">
             <button type="button" role="tab" id="tab-fcfs" class="capsule-tab active" aria-selected="true"
-              aria-controls="panel-content" data-algorithm="fcfs">
+              aria-controls="panel-content" data-algorithm="fcfs" tabindex="0">
               FCFS
             </button>
             <button type="button" role="tab" id="tab-sjf" class="capsule-tab" aria-selected="false"
-              aria-controls="panel-content" data-algorithm="sjf">
+              aria-controls="panel-content" data-algorithm="sjf" tabindex="-1">
               SJF
             </button>
             <button type="button" role="tab" id="tab-rr" class="capsule-tab" aria-selected="false"
-              aria-controls="panel-content" data-algorithm="rr">
+              aria-controls="panel-content" data-algorithm="rr" tabindex="-1">
               Round Robin
             </button>
             <span class="capsule-glider" aria-hidden="true"></span>
@@ -268,6 +280,8 @@
         </div>
 
         <div id="panel-content" class="results-content-area" role="tabpanel" aria-labelledby="tab-fcfs">
+          <!-- Live region: อ่านสรุปผลลัพธ์ให้ screen reader หลังคำนวณ -->
+          <p id="results-live" class="sr-only" role="status" aria-live="polite"></p>
           <!-- Average Metrics Cards with Calculations & Formulas (Matches Screenshot 1) -->
           <div class="metrics-row">
             <!-- Card 1: Average Waiting Time -->
@@ -344,7 +358,7 @@
                 aria-label="แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู">
                 <!-- Rendered dynamically -->
               </div>
-              <div id="gantt-timestamps" class="gantt-time-labels">
+              <div id="gantt-timestamps" class="gantt-time-labels" aria-hidden="true">
                 <!-- Time marks populated dynamically -->
               </div>
             </div>
@@ -420,7 +434,6 @@
           mainTitle: "โปรแกรมจำลองการจัดคิวซีพียู",
           mainSubtitle: "FCFS, SJF และ Round Robin",
           atPill: "(AT = 0)",
-          themeToggleTitle: "สลับโหมดมืด/สว่าง (Light / Dark Mode)",
           langGroupAria: "เลือกภาษา (Language Selector)",
           langToggleTitle: "สลับภาษา / Switch Language (TH / EN)",
           langToggleAria: "สลับภาษา ไทย / English",
@@ -428,7 +441,6 @@
           badgeStatusAt: "เวลามาถึง (AT) = 0",
           labelNumProcesses: "จำนวนกระบวนการ (Processes)",
           processUnit: "กระบวนการ",
-          placeholderNumProc: "2 - 8",
           labelTqText: "ควอนตัมเวลา (Time Quantum Q)",
           labelHintRr: "สำหรับ Round Robin",
           placeholderTq: "เช่น 2",
@@ -483,6 +495,9 @@
           errInvalidTq: "ควอนตัมเวลา (Time Quantum Q) ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
           errEmptyBt: "กรุณากรอกข้อมูลให้ครบทุกโปรเซส (พบช่องว่างที่ {p})",
           errInvalidBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
+          errMaxBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องไม่เกิน 99 ms",
+          errMaxTq: "ควอนตัมเวลา (Time Quantum Q) ต้องไม่เกิน 20 ms",
+          errProcMismatch: "จำนวนช่องกรอก Burst Time ({count} ช่อง) ไม่ตรงกับจำนวนโปรเซสที่ระบุ ({num}) กรุณากดปุ่มสุ่มหรือแก้จำนวนโปรเซสใหม่",
           glossary: [
             { term: "Burst Time (BT)", desc: "ระยะเวลาที่กระบวนการต้องใช้ซีพียูในการประมวลผลจนเสร็จสิ้น (หน่วย: ms)" },
             { term: "Arrival Time (AT = 0)", desc: "เวลาที่กระบวนการเข้าสู่ Ready Queue ในแบบจำลองนี้ทุกโปรเซสมาพร้อมกันที่เวลา 0" },
@@ -498,7 +513,6 @@
           mainTitle: "CPU Scheduling Simulator",
           mainSubtitle: "FCFS, SJF and Round Robin",
           atPill: "(AT = 0)",
-          themeToggleTitle: "Toggle Theme (Light / Dark Mode)",
           langGroupAria: "Language Selector",
           langToggleTitle: "Switch Language (TH / EN)",
           langToggleAria: "Switch Language Thai / English",
@@ -560,6 +574,9 @@
           errInvalidTq: "Time Quantum (Q) must be a positive integer greater than 0.",
           errEmptyBt: "Please fill in Burst Time for all processes (missing at {p}).",
           errInvalidBt: "Burst Time for {p} must be a positive integer greater than 0.",
+          errMaxBt: "Burst Time for {p} must not exceed 99 ms.",
+          errMaxTq: "Time Quantum (Q) must not exceed 20 ms.",
+          errProcMismatch: "Burst Time fields ({count}) do not match the number of processes ({num}). Please adjust the process count.",
           glossary: [
             { term: "Burst Time (BT)", desc: "The total duration of CPU execution required by a process to finish (unit: ms)." },
             { term: "Arrival Time (AT = 0)", desc: "The timestamp a process enters the ready queue. In this simulator, all processes arrive at t = 0." },
@@ -570,6 +587,19 @@
           ]
         }
       };
+
+      /**
+       * ดึงข้อความแปลตามภาษาปัจจุบัน (ใช้ร่วมกันระหว่าง index.html และ app.js)
+       * @param {string} key คีย์ใน i18n
+       * @param {string} [fallback] ข้อความสำรองเมื่อไม่พบคีย์
+       */
+      function simText(key, fallback) {
+        const dict = i18n[window.currentLanguage] || i18n.th;
+        return (dict && dict[key]) || fallback || '';
+      }
+
+      // ให้ app.js ใช้ข้อความชุดเดียวกัน (ต้องพร้อมก่อนการเรนเดอร์ครั้งแรก)
+      window.simText = simText;
 
       function updateLanguage(lang) {
         const t = i18n[lang] || i18n.th;
@@ -744,11 +774,18 @@
           }
         }
 
-        // Update active algorithm meta text & table rows
+        // อัปเดตคำอธิบายอัลกอริทึม + ตารางผลลัพธ์ให้เป็นภาษาที่เลือก
+        // ต้อง validate ก่อน ไม่งั้นการสลับภาษาจะคำนวณผลใหม่จากค่าที่ถูกบังคับ
+        // (BT ที่ว่าง -> 1, TQ ที่ผิด -> 2) โดยที่ผู้ใช้ไม่รู้ตัว
         const activeTab = document.querySelector('.capsule-tab.active');
         const currentAlgoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
-        if (typeof renderAlgorithmPreview === 'function') {
-          renderAlgorithmPreview(currentAlgoKey);
+        const inputCheck = validateSchedulingInputs();
+
+        if (!inputCheck.isValid) {
+          showValidationError(inputCheck, inputCheck.input);
+        } else {
+          hideValidationError();
+          renderResultsFor(currentAlgoKey);
         }
 
         // Glossary Items
@@ -866,11 +903,27 @@
         if (isNaN(tq) || !Number.isInteger(tq) || tq <= 0) {
           return { isValid: false, key: 'errInvalidTq', message: t.errInvalidTq, input: tqInput };
         }
+        // 3.1 Time Quantum ต้องไม่เกิน 20 ms (ให้ตรงกับ attribute max ของ input)
+        if (tq > 20) {
+          return { isValid: false, key: 'errMaxTq', message: t.errMaxTq, input: tqInput };
+        }
 
         // 4 & 5. ตรวจสอบเวลาประมวลผล (Burst Time) ของแต่ละโปรเซส
         const burstInputs = burstContainer ? burstContainer.querySelectorAll('.burst-number-input') : [];
         if (burstInputs.length === 0) {
           return { isValid: false, key: 'errEmptyProc', message: t.errEmptyProc, input: numProcInput };
+        }
+
+        // 4.1 จำนวนช่องกรอกต้องตรงกับจำนวนโปรเซสที่ระบุ
+        // (กันเคสที่เบราว์เซอร์ restore ค่า num-processes หลัง reload แต่ JS สร้างช่องไว้จำนวนอื่น)
+        if (burstInputs.length !== numProc) {
+          return {
+            isValid: false,
+            key: 'errProcMismatch',
+            param: { count: burstInputs.length, num: numProc },
+            message: t.errProcMismatch.replace('{count}', burstInputs.length).replace('{num}', numProc),
+            input: numProcInput
+          };
         }
 
         const validBurstTimes = [];
@@ -902,6 +955,17 @@
             };
           }
 
+          // 5.1 Burst Time ต้องไม่เกิน 99 ms (ให้ตรงกับ attribute max และกันกราฟ Gantt ระเบิด)
+          if (bt > 99) {
+            return {
+              isValid: false,
+              key: 'errMaxBt',
+              param: { p: pName },
+              message: t.errMaxBt.replace('{p}', pName),
+              input: inp
+            };
+          }
+
           validBurstTimes.push(bt);
         }
 
@@ -916,176 +980,31 @@
       }
 
       /* ==========================================================================
-         Algorithm Specifications & Dynamic Visualization Datasets
+         Result Rendering (delegated to app.js)
          ========================================================================== */
-      const algoData = {
-        fcfs: {
-          badge: 'FCFS',
-          name: 'First-Come, First-Served (FCFS)',
-          descTh: '<strong>First-Come, First-Served (FCFS):</strong> กระบวนการที่มาถึงก่อนจะได้รับการประมวลผลก่อนตามลำดับคิว โดยไม่ถูกแทรกกลางคัน (Non-preemptive) เมื่อทุกกระบวนการมาถึงพร้อมกันที่เวลา 0 (AT = 0) ลำดับการประมวลผลจะเป็น P1 &rarr; P2 &rarr; P3 &rarr; P4',
-          descEn: '<strong>First-Come, First-Served (FCFS):</strong> The process that arrives first is executed first until completion without preemption. Since all processes arrive at time 0 (AT = 0), execution strictly follows the order P1 &rarr; P2 &rarr; P3 &rarr; P4.',
-          awt: '10.25',
-          awtFormula: '(0 + 6 + 14 + 21) / 4 = 10.25 ms',
-          atat: '16.25',
-          atatFormula: '(6 + 14 + 21 + 24) / 4 = 16.25 ms',
-          makespan: '24 ms',
-          blocks: [
-            { id: 1, name: 'P1', dur: 6 },
-            { id: 2, name: 'P2', dur: 8 },
-            { id: 3, name: 'P3', dur: 7 },
-            { id: 4, name: 'P4', dur: 3 }
-          ],
-          stamps: [0, 6, 14, 21, 24],
-          rows: [
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 6, tat: 6, wt: 0 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 6, ct: 14, tat: 14, wt: 6 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 14, ct: 21, tat: 21, wt: 14 },
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 21, ct: 24, tat: 24, wt: 21 }
-          ]
-        },
-        sjf: {
-          badge: 'SJF',
-          name: 'Shortest Job First (SJF - Non-Preemptive)',
-          descTh: '<strong>Shortest Job First (SJF - Non-Preemptive):</strong> อัลกอริทึมเลือกประมวลผลโปรเซสที่มี Burst Time สั้นที่สุดก่อน (P4 &rarr; P1 &rarr; P3 &rarr; P2) เพื่อลดเวลารอคอยเฉลี่ย (AWT) ให้เหลือน้อยที่สุด',
-          descEn: '<strong>Shortest Job First (SJF - Non-Preemptive):</strong> Prioritizes processes with the shortest burst time first (P4 &rarr; P1 &rarr; P3 &rarr; P2) to minimize average waiting time.',
-          awt: '7.00',
-          awtFormula: '(0 + 3 + 9 + 16) / 4 = 7.00 ms',
-          atat: '13.00',
-          atatFormula: '(3 + 9 + 16 + 24) / 4 = 13.00 ms',
-          makespan: '24 ms',
-          blocks: [
-            { id: 4, name: 'P4', dur: 3 },
-            { id: 1, name: 'P1', dur: 6 },
-            { id: 3, name: 'P3', dur: 7 },
-            { id: 2, name: 'P2', dur: 8 }
-          ],
-          stamps: [0, 3, 9, 16, 24],
-          rows: [
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 0, ct: 3, tat: 3, wt: 0 },
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 3, ct: 9, tat: 9, wt: 3 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 9, ct: 16, tat: 16, wt: 9 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 16, ct: 24, tat: 24, wt: 16 }
-          ]
-        },
-        rr: {
-          badge: 'RR',
-          name: 'Round Robin (RR)',
-          descTh: '<strong>Round Robin (RR):</strong> จัดสรรเวลาการทำงานตาม Time Quantum (Q = 2) สลับสับเปลี่ยนคิวหมุนเวียนอย่างเท่าเทียมกันแบบ Preemptive',
-          descEn: '<strong>Round Robin (RR):</strong> Cyclic execution sharing CPU time equally using Time Quantum slices (Q = 2) with preemption.',
-          awt: '13.75',
-          awtFormula: '(11 + 15 + 17 + 12) / 4 = 13.75 ms',
-          atat: '19.75',
-          atatFormula: '(17 + 23 + 24 + 15) / 4 = 19.75 ms',
-          makespan: '24 ms',
-          blocks: [
-            { id: 1, name: 'P1', dur: 2 },
-            { id: 2, name: 'P2', dur: 2 },
-            { id: 3, name: 'P3', dur: 2 },
-            { id: 4, name: 'P4', dur: 2 },
-            { id: 1, name: 'P1', dur: 2 },
-            { id: 2, name: 'P2', dur: 2 },
-            { id: 3, name: 'P3', dur: 2 },
-            { id: 4, name: 'P4', dur: 1 },
-            { id: 1, name: 'P1', dur: 2 },
-            { id: 2, name: 'P2', dur: 2 },
-            { id: 3, name: 'P3', dur: 2 },
-            { id: 2, name: 'P2', dur: 2 },
-            { id: 3, name: 'P3', dur: 1 }
-          ],
-          stamps: [0, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 24],
-          rows: [
-            { id: 1, name: 'P1', label: 'Process 1', bt: 6, st: 0, ct: 17, tat: 17, wt: 11 },
-            { id: 2, name: 'P2', label: 'Process 2', bt: 8, st: 2, ct: 23, tat: 23, wt: 15 },
-            { id: 3, name: 'P3', label: 'Process 3', bt: 7, st: 4, ct: 24, tat: 24, wt: 17 },
-            { id: 4, name: 'P4', label: 'Process 4', bt: 3, st: 6, ct: 15, tat: 15, wt: 12 }
-          ]
-        }
-      };
 
-      function updateAlgoInfoText(algoKey, lang) {
-        const item = algoData[algoKey] || algoData.fcfs;
-        const currentLang = lang || window.currentLanguage || 'th';
-        const infoEl = document.getElementById('algo-info-text');
-        if (infoEl) {
-          infoEl.innerHTML = currentLang === 'en' ? item.descEn : item.descTh;
+      /**
+       * วาดผลลัพธ์ของอัลกอริทึมที่เลือกด้วย engine จริงใน app.js เท่านั้น
+       * ตัวเลขบนหน้าจอต้องคำนวณจากค่าที่ผู้ใช้กรอกเสมอ (ไม่มีข้อมูลตัวอย่าง hardcode แล้ว)
+       * @param {string} algoKey 'fcfs' | 'sjf' | 'rr'
+       */
+      function renderResultsFor(algoKey) {
+        if (typeof window.runSchedulingAlgorithm !== 'function') {
+          console.warn('[CPU Simulator] app.js ยังไม่ถูกโหลด — ไม่สามารถคำนวณผลลัพธ์ได้');
+          return;
         }
+        window.runSchedulingAlgorithm(algoKey || 'fcfs');
       }
 
-      function renderAlgorithmPreview(algoKey) {
-        const item = algoData[algoKey] || algoData.fcfs;
-        updateAlgoInfoText(algoKey);
-
-        const awtEl = document.getElementById('avg-waiting-time');
-        const atatEl = document.getElementById('avg-turnaround-time');
-        const awtFormulaEl = document.getElementById('awt-formula');
-        const atatFormulaEl = document.getElementById('atat-formula');
-        const makespanEl = document.getElementById('total-makespan-val');
-
-        if (awtEl) awtEl.textContent = item.awt;
-        if (atatEl) atatEl.textContent = item.atat;
-        if (awtFormulaEl) awtFormulaEl.textContent = item.awtFormula;
-        if (atatFormulaEl) atatFormulaEl.textContent = item.atatFormula;
-        if (makespanEl) makespanEl.textContent = item.makespan;
-
-        // Render Gantt
-        const gantt = document.getElementById('gantt-chart');
-        const stamps = document.getElementById('gantt-timestamps');
-        if (gantt) {
-          gantt.innerHTML = '';
-          const totalMakespan = item.stamps[item.stamps.length - 1] || 24;
-          item.blocks.forEach(b => {
-            const div = document.createElement('div');
-            div.className = `gantt-block block-p${b.id}`;
-            div.style.flex = `${b.dur} 0 auto`;
-            div.innerHTML = `
-              <div class="gantt-block-label">
-                <span class="gantt-proc-name">${b.name}</span>
-                <span class="gantt-proc-dur">${b.dur} ms</span>
-              </div>
-            `;
-            gantt.appendChild(div);
-          });
-
-          if (stamps) {
-            stamps.innerHTML = '';
-            item.stamps.forEach(t => {
-              const sp = document.createElement('span');
-              sp.className = 'gantt-mark';
-              sp.style.left = `${(t / totalMakespan) * 100}%`;
-              sp.textContent = t;
-              stamps.appendChild(sp);
-            });
-          }
-        }
-
-        // Render Table
-        const tbody = document.getElementById('results-table-body');
-        if (tbody) {
-          tbody.innerHTML = '';
-          const currentLang = window.currentLanguage || 'th';
-          const t = i18n[currentLang] || i18n.th;
-          item.rows.forEach(r => {
-            const tr = document.createElement('tr');
-            const procLabel = `${t.procLabelPrefix}${r.id}`;
-            const statusLabel = t.statusCompleted;
-            tr.innerHTML = `
-              <td>
-                <div class="table-proc-cell">
-                  <span class="process-badge badge-p${r.id}">${r.name}</span>
-                  <span class="proc-cell-name">${procLabel}</span>
-                </div>
-              </td>
-              <td><strong>${r.bt}</strong> <span class="unit-text">ms</span></td>
-              <td>${r.st} <span class="unit-text">ms</span></td>
-              <td><span class="ct-highlight">${r.ct}</span> <span class="unit-text">ms</span></td>
-              <td><span class="tat-highlight">${r.tat !== undefined ? r.tat : r.ct}</span> <span class="unit-text">ms</span></td>
-              <td><span class="wt-pill">${r.wt}</span> <span class="unit-text">ms</span></td>
-              <td><span class="status-pill-completed">${statusLabel}</span></td>
-            `;
-            tbody.appendChild(tr);
-          });
-        }
-      }
+      // ปุ่มกดค้าง: เก็บเฉพาะ "ตัวหยุด" ที่ active อยู่ตัวเดียว
+      // → ใช้ listener ระดับ window ชุดเดียว ไม่ผูก listener ใหม่ทุกครั้งที่สร้างปุ่ม (กัน listener leak)
+      let activeHoldStop = null;
+      window.addEventListener('blur', () => {
+        if (activeHoldStop) activeHoldStop();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && activeHoldStop) activeHoldStop();
+      });
 
       function attachHoldRepeat(btn, onStep, onStop) {
         if (!btn) return;
@@ -1100,6 +1019,7 @@
           e.preventDefault();
           isHolding = true;
           didRepeat = false;
+          activeHoldStop = stop;
 
           onStep(false);
 
@@ -1120,6 +1040,7 @@
         };
 
         const stop = () => {
+          if (activeHoldStop === stop) activeHoldStop = null;
           if (!isHolding) return;
           isHolding = false;
           clearTimeout(timer);
@@ -1137,7 +1058,16 @@
         btn.addEventListener('touchcancel', stop);
       }
 
-      function renderBurstInputs(count) {
+      // ค่าเริ่มต้นของ Burst Time ต่อโปรเซส (ใช้ทั้งตอนสร้างครั้งแรกและตอนกดรีเซ็ต)
+      const DEFAULT_BURST_TIMES = [6, 8, 7, 3, 5, 4, 9, 2, 6, 8];
+
+      /**
+       * สร้างช่องกรอก Burst Time ใหม่ตามจำนวนโปรเซส
+       * @param {number} count จำนวนโปรเซสที่ต้องการ
+       * @param {boolean} forceDefaults true = ทิ้งค่าเดิมทั้งหมดแล้วกลับไปใช้ค่าเริ่มต้นจริง ๆ
+       *        (ใช้กับปุ่มรีเซ็ต) / false = คงค่าที่ผู้ใช้กรอกไว้เท่าที่มีอยู่
+       */
+      function renderBurstInputs(count, forceDefaults = false) {
         const burstWrap = document.getElementById('burst-inputs-container');
         if (!burstWrap) return;
         const currentInputs = burstWrap.querySelectorAll('.burst-number-input');
@@ -1149,9 +1079,11 @@
 
         burstWrap.innerHTML = '';
         for (let i = 1; i <= count; i++) {
-          const defaultVal = (existingValues[i - 1] !== undefined && existingValues[i - 1] !== '')
+          const hasPreservedValue = !forceDefaults &&
+            existingValues[i - 1] !== undefined && existingValues[i - 1] !== '';
+          const defaultVal = hasPreservedValue
             ? existingValues[i - 1]
-            : ([6, 8, 7, 3, 5, 4, 9, 2, 6, 8][i - 1] || (Math.floor(Math.random() * 8) + 2));
+            : (DEFAULT_BURST_TIMES[i - 1] || (Math.floor(Math.random() * 8) + 2));
 
           const card = document.createElement('div');
           card.className = 'burst-pill-card burst-card-enter';
@@ -1162,12 +1094,12 @@
 
           card.innerHTML = `
             <span class="process-badge badge-p${i}">P${i}</span>
-            <div class="bt-stepper-wrap" id="wrap-bt-${i}">
-              <button type="button" class="bt-btn bt-btn-dec" id="btn-bt-dec-${i}" aria-label="${decTitle}" title="${decTitle}">
+            <div class="bt-stepper-wrap">
+              <button type="button" class="bt-btn bt-btn-dec" aria-label="${decTitle}" title="${decTitle}">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </button>
-              <input type="number" class="burst-number-input" value="${defaultVal}" min="1" max="99" id="bt-input-${i}" aria-label="${itemAria}">
-              <button type="button" class="bt-btn bt-btn-inc" id="btn-bt-inc-${i}" aria-label="${incTitle}" title="${incTitle}">
+              <input type="number" class="burst-number-input" min="1" max="99" aria-label="${itemAria}">
+              <button type="button" class="bt-btn bt-btn-inc" aria-label="${incTitle}" title="${incTitle}">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </button>
             </div>
@@ -1178,6 +1110,12 @@
           const inp = card.querySelector('.burst-number-input');
           const btnDec = card.querySelector('.bt-btn-dec');
           const btnInc = card.querySelector('.bt-btn-inc');
+
+          // ใส่ค่าเริ่มต้นผ่าน property (ไม่ interpolate ลง innerHTML → กันค่าแปลกปลอมหลุดเป็น HTML)
+          if (inp) {
+            const safeVal = String(defaultVal).replace(/[^0-9]/g, '');
+            inp.value = safeVal !== '' ? safeVal : '1';
+          }
 
           if (btnDec && inp) {
             attachHoldRepeat(btnDec, (isRapid) => {
@@ -1225,9 +1163,8 @@
         }
       }
 
-      function initSamplePreview() {
+      function initBurstInputs() {
         renderBurstInputs(4);
-        renderAlgorithmPreview('fcfs');
       }
 
       function setTheme(theme) {
@@ -1298,7 +1235,8 @@
           });
         }
 
-        initSamplePreview();
+        // สร้างช่องกรอกก่อน แล้ว updateLanguage() จะ validate + คำนวณ + ลงสีภาษาครั้งเดียว
+        initBurstInputs();
         updateLanguage(savedLang);
 
         // Liquid Glass Capsule Switcher Glider
@@ -1322,26 +1260,60 @@
           }
         }
 
-        tabs.forEach(tab => {
-          tab.addEventListener('click', () => {
-            tabs.forEach(t => {
-              t.classList.remove('active');
-              t.setAttribute('aria-selected', 'false');
-            });
-            tab.classList.add('active');
-            tab.setAttribute('aria-selected', 'true');
-            updateCapsuleGlider(false);
+        const panel = document.getElementById('panel-content');
+        const tablist = document.getElementById('algo-tablist');
+        const tabList = Array.prototype.slice.call(tabs);
 
-            const algoKey = tab.getAttribute('data-algorithm') || 'fcfs';
-
-            // If app.js provides custom calculation runner, delegate to it
-            if (typeof window.runSchedulingAlgorithm === 'function') {
-              window.runSchedulingAlgorithm(algoKey);
-            } else {
-              renderAlgorithmPreview(algoKey);
+        /**
+         * เปิดใช้งานแท็บอัลกอริทึม: อัปเดต active/aria-selected/tabindex, glider,
+         * aria-labelledby ของ tabpanel แล้วค่อยคำนวณผล (ถ้าต้องการ)
+         * @param {Element} tabEl แท็บที่ต้องการเปิด
+         * @param {boolean} shouldRender true = คำนวณผลลัพธ์ใหม่ด้วย engine
+         */
+        function activateTab(tabEl, shouldRender) {
+          if (!tabEl) return;
+          tabList.forEach(t => {
+            const isActive = t === tabEl;
+            t.classList.toggle('active', isActive);
+            t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            t.tabIndex = isActive ? 0 : -1;
+          });
+          if (panel) panel.setAttribute('aria-labelledby', tabEl.id);
+          updateCapsuleGlider(false);
+          if (shouldRender) {
+            // ต้อง validate ก่อน ไม่งั้นการสลับแท็บจะคำนวณจากค่าที่ถูกบังคับ (BT->1, TQ->2) เงียบ ๆ
+            const check = validateSchedulingInputs();
+            if (!check.isValid) {
+              showValidationError(check, check.input);
+              return;
             }
+            hideValidationError();
+            renderResultsFor(tabEl.getAttribute('data-algorithm') || 'fcfs');
+          }
+        }
+
+        tabList.forEach(tab => {
+          tab.addEventListener('click', () => {
+            activateTab(tab, true);
           });
         });
+
+        // คีย์บอร์ดตาม APG tab pattern: ลูกศรซ้าย/ขวา, Home, End
+        if (tablist) {
+          tablist.addEventListener('keydown', (e) => {
+            if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(e.key) === -1) return;
+            const current = tabList.indexOf(document.activeElement);
+            if (current === -1) return;
+            e.preventDefault();
+            let next = current;
+            if (e.key === 'ArrowRight') next = (current + 1) % tabList.length;
+            if (e.key === 'ArrowLeft') next = (current - 1 + tabList.length) % tabList.length;
+            if (e.key === 'Home') next = 0;
+            if (e.key === 'End') next = tabList.length - 1;
+            tabList[next].focus();
+            activateTab(tabList[next], true);
+          });
+        }
 
         // Initialize Liquid Glider Position
         updateCapsuleGlider(true);
@@ -1538,31 +1510,33 @@
           closeAlertBtn.addEventListener('click', hideValidationError);
         }
 
-        // Calculate Button with Validation & Smooth Scrolling
-        const btnCalc = document.getElementById('btn-calculate');
-        if (btnCalc) {
-          btnCalc.addEventListener('click', () => {
-            const result = validateSchedulingInputs();
-            if (!result.isValid) {
-              showValidationError(result, result.input);
-              return;
-            }
-            hideValidationError();
+        // คำนวณผลลัพธ์: ผูกกับ submit ของฟอร์ม → กดปุ่มหรือกด Enter ในช่องกรอกก็ทำงาน
+        const simForm = document.getElementById('simulator-form');
 
-            // Run active algorithm if app.js is hooked
-            const activeTab = document.querySelector('.capsule-tab.active');
-            const algoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
-            if (typeof window.runSchedulingAlgorithm === 'function') {
-              window.runSchedulingAlgorithm(algoKey);
-            } else {
-              renderAlgorithmPreview(algoKey);
-            }
+        function handleCalculate() {
+          const result = validateSchedulingInputs();
+          if (!result.isValid) {
+            showValidationError(result, result.input);
+            return;
+          }
+          hideValidationError();
 
-            // Smooth glide down to Simulation Results (Zone 2)
-            const resultsSection = document.getElementById('results-section');
-            if (resultsSection) {
-              resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+          // Run active algorithm if app.js is hooked
+          const activeTab = document.querySelector('.capsule-tab.active');
+          const algoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
+          renderResultsFor(algoKey);
+
+          // Smooth glide down to Simulation Results (Zone 2)
+          const resultsSection = document.getElementById('results-section');
+          if (resultsSection) {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+
+        if (simForm) {
+          simForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleCalculate();
           });
         }
 
@@ -1645,33 +1619,20 @@
               tqInput.value = 2;
               animateCounter(tqInput, 'down');
             }
-            renderBurstInputs(4);
-            renderAlgorithmPreview('fcfs');
+            // forceDefaults = true → ล้างค่า BT เดิมกลับไปเป็นค่าเริ่มต้นจริง ๆ
+            renderBurstInputs(4, true);
+            // กลับไปแท็บ FCFS แล้วคำนวณผลจากค่าที่กรอกจริง (หลังรีเซ็ต)
             const fcfsTab = document.getElementById('tab-fcfs');
-            if (fcfsTab) {
-              tabs.forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-              });
-              fcfsTab.classList.add('active');
-              fcfsTab.setAttribute('aria-selected', 'true');
-              updateCapsuleGlider(false);
-            }
+            activateTab(fcfsTab, false);
+            renderResultsFor('fcfs');
             updateStepperButtons();
           });
         }
 
-        // Expose global APIs for algorithm developer (app.js)
-        window.validateSchedulingInputs = validateSchedulingInputs;
-        window.showValidationError = showValidationError;
-        window.hideValidationError = hideValidationError;
-        window.clearInputErrors = clearInputErrors;
-        window.renderAlgorithmPreview = renderAlgorithmPreview;
-        window.updateLanguage = updateLanguage;
-        window.updateCapsuleGlider = updateCapsuleGlider;
+        // Hook ที่ app.js ใช้จริงเท่านั้น (ลด global ที่ไม่มีผู้เรียก)
+        // animateCounter / updateCapsuleGlider ถูกเรียกจากฟังก์ชันระดับ IIFE จึงต้องอ้างผ่าน window
         window.animateCounter = animateCounter;
-        window.triggerCapsulePulse = triggerCapsulePulse;
-        window.attachHoldRepeat = attachHoldRepeat;
+        window.updateCapsuleGlider = updateCapsuleGlider;
       });
     })();
   </script>

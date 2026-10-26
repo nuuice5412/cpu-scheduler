@@ -212,6 +212,13 @@ body {
   margin: 0;
 }
 
+/* radio ถูกซ่อนด้วย opacity 0 → ต้องมี focus ring ที่ label เพื่อให้คีย์บอร์ดเห็นตำแหน่ง
+   ใช้ :focus-visible (ไม่ใช่ :focus-within) เพื่อไม่ให้ขึ้นวงตอนคลิกเมาส์ */
+.theme-option:has(.theme-radio:focus-visible) {
+  outline: 3px solid var(--clay-purple);
+  outline-offset: 2px;
+}
+
 .theme-opt-icon {
   width: 20px;
   height: 20px;
@@ -321,7 +328,7 @@ body {
   padding: 4px;
   display: flex;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 /* 3D Circular Button Thumb */
@@ -503,7 +510,7 @@ body {
   border-radius: var(--radius-md);
   background: var(--bg-inset);
   box-shadow: var(--clay-inset-shadow);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
 }
 .inset-input-wrapper:focus-within {
@@ -546,9 +553,8 @@ body {
     2px 4px 10px rgba(166, 175, 195, 0.35),
     -2px -2px 6px rgba(255, 255, 255, 0.95),
     inset 1px 1px 2px rgba(255, 255, 255, 1);
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.22s ease;
   user-select: none;
-  outline: none;
   flex-shrink: 0;
   z-index: 2;
   position: relative;
@@ -664,13 +670,7 @@ body {
   }
 }
 
-/* Tactile Jelly Scale Pop */
-@keyframes counterJellyPop {
-  0% { transform: scale(1); }
-  45% { transform: scale(1.18); }
-  75% { transform: scale(0.96); }
-  100% { transform: scale(1); }
-}
+/* Tactile Jelly Scale Pop (unused keyframes removed) */
 
 /* Stepper Capsule Tactile Wave Pulse */
 @keyframes stepperPulseInc {
@@ -713,10 +713,6 @@ body {
   animation: counterSlideDown 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.counter-jelly-pop {
-  animation: counterJellyPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
 /* Burst Card Entrance & Pop */
 @keyframes burstCardEnter {
   0% {
@@ -752,40 +748,9 @@ body {
   animation: burstCardPop 0.42s ease-out;
 }
 
-.inset-clay-input {
-  width: 100%;
-  padding: 13px 18px;
-  font-family: var(--font-main);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-main);
-  background: transparent;
-  border: none;
-  outline: none;
-  border-radius: var(--radius-md);
-}
-.inset-clay-input::placeholder { color: var(--text-light); }
-.inset-select { appearance: none; cursor: pointer; padding-right: 42px; }
-.select-arrow {
-  position: absolute;
-  right: 14px;
-  pointer-events: none;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-}
-.input-unit {
-  position: absolute;
-  right: 16px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
 /* Burst Time Section & Cards */
 .burst-section { margin-bottom: 26px; }
-.burst-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.burst-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 14px; }
 .burst-note { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
 .burst-grid {
   display: grid;
@@ -847,7 +812,7 @@ body {
   padding: 3px 4px;
   box-shadow: var(--clay-inset-shadow);
   border: 1.5px solid transparent;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bt-stepper-wrap:focus-within {
@@ -870,7 +835,6 @@ body {
   box-shadow: 1px 2px 5px rgba(166, 175, 195, 0.32), inset 1px 1px 1px rgba(255, 255, 255, 1);
   transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, color 0.15s ease;
   user-select: none;
-  outline: none;
   flex-shrink: 0;
   z-index: 2;
   padding: 0;
@@ -909,10 +873,6 @@ body {
   margin: 0;
 }
 
-.burst-pill-input-wrap {
-  width: 100%;
-}
-
 /* ==========================================================================
    Validation Alert & Error Feedback (Soft Claymorphism)
    ========================================================================== */
@@ -924,7 +884,7 @@ body {
   border-radius: var(--radius-md);
   margin-bottom: 20px;
   animation: clayAlertShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transition: all 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
   position: relative;
 }
 
@@ -933,10 +893,6 @@ body {
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
   40%, 60% { transform: translate3d(4px, 0, 0); }
-}
-
-.clay-alert-shake {
-  animation: clayAlertShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 .clay-alert-danger {
@@ -997,7 +953,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
 }
 .alert-close-btn:hover {
@@ -1041,7 +997,6 @@ body {
   border-radius: var(--radius-lg);
   border: none;
   cursor: pointer;
-  outline: none;
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, filter 0.15s ease;
   user-select: none;
   text-decoration: none;
@@ -1086,33 +1041,6 @@ body {
   flex-wrap: wrap;
   gap: 16px;
 }
-.results-header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.results-subtitle {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.live-pulse-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #10B981;
-  display: inline-block;
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  animation: pulseGreen 2s infinite;
-  flex-shrink: 0;
-}
-@keyframes pulseGreen {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
 /* Liquid Glass Capsule Switcher (Den Dionigi Style with Sliding Frosted Lens) */
 .clay-capsule-switcher {
   display: inline-flex;
@@ -1146,7 +1074,6 @@ body {
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: color 0.22s ease, transform 0.2s ease;
-  outline: none;
   user-select: none;
   white-space: nowrap;
   display: inline-flex;
@@ -1358,10 +1285,10 @@ body {
   background: var(--bg-inset); border-radius: 20px; padding: 18px 20px 14px; box-shadow: var(--clay-inset-shadow); overflow-x: auto;
 }
 .gantt-chart-bar {
-  display: flex; width: 100%; min-width: 440px; height: 52px; gap: 6px; position: relative;
+  display: grid; grid-auto-flow: column; width: 100%; min-width: 440px; height: 52px; gap: 0; position: relative;
 }
 .gantt-block {
-  height: 100%; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; cursor: default; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -2px -2px 4px rgba(0, 0, 0, 0.08); position: relative; overflow: hidden; user-select: none;
+  height: 100%; min-width: 0; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; cursor: default; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -2px -2px 4px rgba(0, 0, 0, 0.08); position: relative; overflow: hidden; user-select: none;
 }
 .gantt-block:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.05); z-index: 2; }
 .gantt-block-label {
@@ -1403,8 +1330,16 @@ body {
   display: flex; width: 100%; min-width: 440px; margin-top: 8px; position: relative; height: 20px;
 }
 .gantt-mark {
-  position: absolute; transform: translateX(-50%); font-family: var(--font-heading); font-size: 0.78rem; font-weight: 700; color: var(--text-muted);
+  position: absolute; transform: translateX(-50%); font-family: var(--font-heading); font-size: 0.78rem; font-weight: 700; color: var(--text-muted); white-space: nowrap;
 }
+/* ตัวแรก/ตัวสุดท้ายไม่ให้ล้นออกนอกกรอบ (กัน scrollbar แนวนอน) */
+.gantt-mark:first-child { transform: translateX(0); }
+.gantt-mark:last-child { transform: translateX(-100%); }
+
+/* โหมดบล็อกเยอะ (RR หลายสไลซ์): มุมโค้งเล็กลงและซ่อนตัวเลข ms เพื่อไม่ให้ทับกัน */
+.gantt-chart-bar--dense .gantt-block { border-radius: 8px; }
+.gantt-chart-bar--dense .gantt-block-label { padding: 0 2px; }
+.gantt-chart-bar--dense .gantt-proc-dur { display: none; }
 
 /* ==========================================================================
    Data Table (Detailed Execution Metrics)
@@ -1438,7 +1373,7 @@ body {
 }
 .clay-data-table th.th-process { padding-left: 20px; }
 .clay-data-table td {
-  padding: 14px 16px; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-card-alt); transition: all 0.15s ease;
+  padding: 14px 16px; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-card-alt); transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 .clay-data-table tr td:first-child { border-top-left-radius: 14px; border-bottom-left-radius: 14px; padding-left: 20px; }
 .clay-data-table tr td:last-child { border-top-right-radius: 14px; border-bottom-right-radius: 14px; }
@@ -1452,8 +1387,7 @@ body {
   align-items: center;
   gap: 12px;
 }
-.proc-cell-name,
-.proc-name-label {
+.proc-cell-name {
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--text-main);
@@ -1512,7 +1446,7 @@ body {
 .glossary-accordion {
   margin-top: 18px; background: var(--bg-card-alt); border-radius: var(--radius-md);
   box-shadow: 6px 8px 18px rgba(166, 175, 195, 0.18), -4px -4px 12px rgba(255, 255, 255, 0.9), inset 2px 2px 4px rgba(255, 255, 255, 0.95), inset -2px -2px 4px rgba(163, 177, 198, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.8); overflow: hidden; transition: all 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.8); overflow: hidden; transition: box-shadow 0.25s ease;
 }
 .glossary-summary {
   display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; cursor: pointer; user-select: none; font-family: var(--font-heading); font-weight: 700; font-size: 0.92rem; color: var(--text-main); list-style: none; transition: background 0.15s ease;
@@ -1552,7 +1486,7 @@ body {
 
   --text-main: #F8FAFC;
   --text-muted: #94A3B8;
-  --text-light: #64748B;
+  --text-light: #7C8798;
 
   --clay-purple: #A78BFA;
   --clay-purple-light: #C4B5FD;
@@ -1792,6 +1726,10 @@ body {
   color: #F8FAFC;
 }
 
+[data-theme="dark"] .clay-data-table th {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
 [data-theme="dark"] .clay-data-table tbody tr:hover td {
   background: #22283D;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.08);
@@ -1933,10 +1871,6 @@ body {
 /* ==========================================================================
    Responsive Breakpoints (Centralized)
    ========================================================================== */
-@media (max-width: 1024px) {
-  .sim-grid { grid-template-columns: 1fr; }
-}
-
 @media (max-width: 580px) {
   body { padding: 20px 12px 36px; }
   .clay-card { padding: 20px 16px; border-radius: var(--radius-lg); }
@@ -1947,4 +1881,21 @@ body {
   .clay-btn { width: 100%; }
   .clay-capsule-switcher { width: 100%; justify-content: space-between; }
   .capsule-tab { flex: 1; padding: 8px 10px; font-size: 0.85rem; text-align: center; }
+}
+
+/* ==========================================================================
+   Print
+   ========================================================================== */
+@media print {
+  body { padding: 0; background: #FFFFFF; }
+  .header-actions, .action-buttons-group, .stepper-btn, .bt-btn,
+  .burst-note, .glossary-accordion, .alert-close-btn { display: none !important; }
+  .clay-card, .clay-metric-card {
+    box-shadow: none !important;
+    border: 1px solid #CBD5E1 !important;
+  }
+  .results-card, .table-section, .gantt-section, .metrics-row { break-inside: avoid; }
+  .clay-data-table th, .clay-data-table td { border: 1px solid #CBD5E1; }
+  .table-outer-clay, .gantt-outer-container { overflow: visible !important; }
+  .gantt-block, .process-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

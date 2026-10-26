@@ -311,10 +311,14 @@
       gantt.innerHTML = '';
       const totalMakespan = result.totalMakespanNum || 1;
 
+      // ใช้ CSS Grid แบ่งคอลัมน์ตามสัดส่วนเวลาจริง (dur fr) แทน flex grow
+      // → ขอบบล็อกตรงกับตำแหน่ง timestamp เป๊ะ เพราะไม่มี gap มาเจือปน
+      gantt.style.gridTemplateColumns = result.blocks.map(b => `${Math.max(1, b.dur)}fr`).join(' ');
+      gantt.classList.toggle('gantt-chart-bar--dense', result.blocks.length > 8);
+
       result.blocks.forEach(b => {
         const div = document.createElement('div');
         div.className = `gantt-block block-p${b.id}`;
-        div.style.flex = `${b.dur} 0 auto`;
         div.innerHTML = `
           <div class="gantt-block-label">
             <span class="gantt-proc-name">${b.name}</span>
@@ -324,9 +328,27 @@
         gantt.appendChild(div);
       });
 
+      // คำอธิบายลำดับจริงให้ screen reader (ไม่ใช่แค่คำว่า "Gantt chart")
+      // จำกัดจำนวนรายการ เพื่อไม่ให้ aria-label ยาวเกินไปในเคสสุดขั้ว (เช่น 990 ช่วง)
+      const MAX_DESC_BLOCKS = 8;
+      const shownBlocks = result.blocks.slice(0, MAX_DESC_BLOCKS).map(b => `${b.name} ${b.dur} ms`);
+      const restCount = result.blocks.length - shownBlocks.length;
+      const scheduleText = restCount > 0
+        ? (currentLang === 'en'
+          ? `${shownBlocks.join(', ')}, and ${restCount} more slices`
+          : `${shownBlocks.join(', ')} และอีก ${restCount} ช่วง`)
+        : shownBlocks.join(', ');
+      gantt.setAttribute('aria-label', currentLang === 'en'
+        ? `Gantt timeline, ${result.blocks.length} slices, total ${totalMakespan} ms: ${scheduleText}`
+        : `แผนภูมิแกนต์ ${result.blocks.length} ช่วง รวม ${totalMakespan} ms: ${scheduleText}`);
+
       if (stampsContainer) {
         stampsContainer.innerHTML = '';
-        result.stamps.forEach(t => {
+        // stamp ถี่เกินไป (เช่น RR หลายสไลซ์) ให้ข้ามบางตัวเพื่อไม่ให้ตัวเลขทับกัน
+        const step = Math.max(1, Math.ceil(result.stamps.length / 12));
+        result.stamps.forEach((t, idx) => {
+          const isLast = idx === result.stamps.length - 1;
+          if (!isLast && idx % step !== 0) return;
           const sp = document.createElement('span');
           sp.className = 'gantt-mark';
           sp.style.left = `${(t / totalMakespan) * 100}%`;
@@ -340,8 +362,10 @@
     const tbody = document.getElementById('results-table-body');
     if (tbody) {
       tbody.innerHTML = '';
-      const procLabelPrefix = currentLang === 'en' ? 'Process ' : 'กระบวนการ ';
-      const statusLabel = currentLang === 'en' ? 'Completed' : 'เสร็จสิ้น';
+      const procLabelPrefix = (typeof window.simText === 'function' && window.simText('procLabelPrefix')) ||
+        (currentLang === 'en' ? 'Process ' : 'กระบวนการ ');
+      const statusLabel = (typeof window.simText === 'function' && window.simText('statusCompleted')) ||
+        (currentLang === 'en' ? 'Completed' : 'เสร็จสิ้น');
 
       result.rows.forEach(r => {
         const tr = document.createElement('tr');
@@ -363,6 +387,14 @@
         tbody.appendChild(tr);
       });
     }
+
+    // ประกาศผลให้ screen reader ผ่าน aria-live (ไม่ขยับโฟกัส)
+    const liveEl = document.getElementById('results-live');
+    if (liveEl) {
+      liveEl.textContent = currentLang === 'en'
+        ? `Average waiting time ${result.awt} ms, average turnaround time ${result.atat} ms, total makespan ${result.makespan}.`
+        : `เวลารอคอยเฉลี่ย ${result.awt} ms เวลาดำเนินการเฉลี่ย ${result.atat} ms เวลารวม ${result.makespan}`;
+    }
   }
 
   // ส่งออกฟังก์ชันหลักสู่ Global Scope เพื่อให้ index.html เรียกใช้ได้
@@ -370,14 +402,7 @@
   window.calculateSJF = calculateSJF;
   window.calculateRR = calculateRR;
   window.runSchedulingAlgorithm = runSchedulingAlgorithm;
-  window.renderAlgorithmPreview = runSchedulingAlgorithm;
 
-  // รันคำนวณรอบแรกทันทีเมื่อโหลดหน้าเสร็จ
-  document.addEventListener('DOMContentLoaded', () => {
-    // ให้เวลา DOM ของ index.html สร้าง input เสร็จก่อนรัน
-    setTimeout(() => {
-      runSchedulingAlgorithm('fcfs');
-    }, 50);
-  });
-
+  // หมายเหตุ: การคำนวณรอบแรกถูกสั่งจาก index.html (initBurstInputs → updateLanguage)
+  // จึงไม่ต้องใช้ setTimeout รอ DOM แบบเดิมอีก และไม่เกิด race ระหว่างสองไฟล์
 })();
