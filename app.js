@@ -228,7 +228,8 @@
       totalMakespanNum: makespan,
       blocks,
       stamps,
-      rows,
+      // AT = 0 สำหรับทุกโปรเซส (ข้อกำหนดของโจทย์) — ใส่ไว้เพื่อให้ตารางมีคอลัมน์ Arrival Time
+      rows: rows.map(r => Object.assign({ at: 0 }, r)),
       descTh,
       descEn
     };
@@ -389,6 +390,7 @@
               <span class="proc-cell-name">${procLabel}</span>
             </div>
           </td>
+          <td>${r.at} <span class="unit-text">ms</span></td>
           <td><strong>${r.bt}</strong> <span class="unit-text">ms</span></td>
           <td>${r.st} <span class="unit-text">ms</span></td>
           <td><span class="ct-highlight">${r.ct}</span> <span class="unit-text">ms</span></td>

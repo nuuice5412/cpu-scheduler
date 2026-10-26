@@ -1391,6 +1391,7 @@ body {
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--text-main);
+  white-space: nowrap;
 }
 .ct-highlight {
   font-family: var(--font-heading);

@@ -25,7 +25,7 @@ An interactive, responsive CPU-scheduling simulator built with vanilla HTML/CSS/
 ### Results
 
 - **Gantt timeline** — the bar is a CSS grid whose columns are `BT fr` units, so every block edge lines up exactly with its timestamp. With more than 8 slices the chart switches to a compact mode (smaller radius, slice durations hidden) and the axis thins out its labels instead of overlapping them.
-- **Metrics table** — Burst Time, Start Time, Completion Time, Turnaround Time, Waiting Time and status for every process.
+- **Metrics table** — Arrival Time (always 0), Burst Time, Start Time, Completion Time, Turnaround Time, Waiting Time and status for every process, exactly the columns required by the assignment.
 - **Summary cards** — Average Waiting Time and Average Turnaround Time with the full arithmetic, e.g. `(0 + 6 + 14 + 21) / 4 = 10.25 ms`, plus the total makespan.
 
 ### Input & controls
@@ -154,6 +154,54 @@ ALL PASS (51)
 ```
 
 The script exits with **0** when everything passes and **1** on the first failure, so it can be wired into CI as-is.
+
+---
+
+## 🧪 Sample test data
+
+The three test cases required by the assignment. Open the simulator and enter:
+
+| # | Input | Expected result |
+| :-: | :--- | :--- |
+| 1 | 4 processes, BT = **6, 8, 7, 3**, Q = 2 → press **Calculate**, then switch tabs | **FCFS** 10.25 / 16.25 · **SJF** 7.00 / 13.00 · **RR** 13.75 / 19.75 (AWT / ATAT), makespan 24 ms |
+| 2 | Any process count → press **สุ่มค่า BT (randomise)** | Every process receives an integer BT ≥ 1 and all three tabs calculate without an error |
+| 3 | Same BT as case 1, open the **Round Robin** tab and change Q from 2 to 5 | RR AWT becomes **14.75** (from 13.75) and ATAT **20.75** (from 19.75) |
+
+Hand-verified calculation (case 1, FCFS, all AT = 0):
+
+| Step | Calculation | Result |
+| :--- | :--- | :--- |
+| CT | running total of BT (6, 8, 7, 3) | 6, 14, 21, 24 |
+| TAT | TAT = CT − AT = CT | 6, 14, 21, 24 |
+| WT | WT = TAT − BT | 0, 6, 14, 21 |
+| AWT | (0 + 6 + 14 + 21) / 4 | **10.25 ms** |
+| ATAT | (6 + 14 + 21 + 24) / 4 | **16.25 ms** |
+
+These numbers match the summary cards in the UI and the assertions in `tests/engine.spec.js`.
+
+---
+
+## 🧰 Tools & versions
+
+| Tool | Version | Used for |
+| :--- | :--- | :--- |
+| Google Chrome (Windows) | 153.0.8010.37 | primary browser for testing the app |
+| Node.js | 24.21.0 — *optional* | running `tests/engine.test.js`; the app itself needs no runtime |
+| HTML / CSS / JavaScript | — | no framework, no bundler, no dependency installation |
+
+To run the app: open `index.html` in Chrome (or use the live demo link at the top).
+
+---
+
+## 🤖 AI usage disclosure
+
+Required by the assignment (ส่วนที่ 3). The AI was used as a reviewing/refactoring assistant, not as a replacement for understanding the code.
+
+- **Tool:** an AI coding agent (DeepSeek Harness, model `deepseek-flash`) working directly inside the repository.
+- **What it helped with:** reviewing the implementation, fixing validation and UI-state bugs (invalid input while switching tabs/languages), rewriting the Gantt bar as a proportional grid, removing dead code, writing the 51-assertion test suite, and drafting this README.
+- **Example prompts:** “Review Code ที่ผมทำหน่อยว่ามีอะไรต้องแก้ไขไหม”, “แก้แค่ข้อ 2 ปุ่มรีเซ็ตไม่รีเซ็ต Burst Time”, “เพดาน BT แก้เลย และ !important 50 จุดในกลุ่ม stepper”.
+- **How the output was verified:** the 51 automated assertions (`tests/engine.spec.js`), headless-browser checks of the UI flows, the hand calculation in *Sample test data* above, and visual review of the screenshots in `docs/`.
+- Every change was read through and can be explained in the presentation video; nothing was copied without verification.
 
 ---
 
