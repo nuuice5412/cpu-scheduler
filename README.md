@@ -1,78 +1,75 @@
-# โปรแกรมจำลองการจัดตารางเวลาซีพียู (CPU Scheduling Simulator)
+# CPU Scheduling Simulator (AT = 0)
 
-โปรแกรมจำลองการทำงานของอัลกอริทึมการจัดตารางเวลาซีพียู (CPU Scheduling Algorithms) แบบอินเทอร์แอคทีฟ ออกแบบด้วยสไตล์ **Claymorphism** ผิวสัมผัสนุ่มสามมิติ รองรับการคำนวณและแสดงผลกราฟิก Gantt Chart แบบเรียลไทม์ ภายใต้เงื่อนไขกระบวนการทั้งหมดมาถึงพร้อมกันที่เวลาเริ่มต้น **(Arrival Time: $AT = 0$)**
+An interactive, responsive web-based simulator for CPU scheduling algorithms designed with soft **Claymorphism** 3D aesthetics. It features real-time dynamic Gantt chart visualization, comprehensive metric calculations, and step-by-step mathematical formulas under the uniform arrival time condition **(Arrival Time: $AT = 0$)**.
 
 ---
 
-## 🚀 ฟีเจอร์เด่น (Key Features)
+## 🚀 Key Features
 
-- **3 อัลกอริทึมมาตรฐานในระบบปฏิบัติการ (Operating System):**
-  1. **FCFS (First-Come, First-Served):** ประมวลผลตามลำดับก่อน-หลัง ไม่มีการแทรกกลางคัน (Non-preemptive)
-  2. **SJF (Shortest Job First - Non-Preemptive):** จัดลำดับประมวลผลงานที่สั้นที่สุดก่อน เพื่อลดเวลารอคอยเฉลี่ยให้ต่ำที่สุด
-  3. **Round Robin (RR - Preemptive):** แบ่งช่วงเวลาทำงานตาม Time Quantum ($Q$) อย่างเท่าเทียม แสดงการสลับคิวเสมือนจริง
-- **การแสดงผลไทม์ไลน์ Gantt Chart แบบไดนามิก:** ปรับสัดส่วนความกว้างของแต่ละบล็อกตามระยะเวลาจริง พร้อมมาร์กเกอร์บอกเวลา (Timestamps)
-- **ตารางสรุปสถิติอย่างละเอียด (Detailed Metrics Table):**
+- **3 Core Operating System Scheduling Algorithms:**
+  1. **FCFS (First-Come, First-Served):** Non-preemptive scheduling executing processes strictly in arrival order.
+  2. **SJF (Shortest Job First - Non-Preemptive):** Prioritizes processes with the shortest burst time first to minimize average waiting time, using FCFS tie-breaking for identical burst times.
+  3. **Round Robin (RR - Preemptive):** Cyclic time-sliced CPU allocation based on configurable Time Quantum ($Q$), accurately capturing preemption intervals and context switches.
+- **Dynamic Gantt Chart Timeline:** Proportional execution duration blocks with exact timestamps for visual schedule tracing.
+- **Detailed Metrics Table:** Real-time calculation of process metrics:
   - Burst Time ($BT$)
   - Start Time ($ST$)
   - Completion Time ($CT$)
   - Turnaround Time ($TAT$)
   - Waiting Time ($WT$)
-- **คำนวณค่าเฉลี่ยและแสดงสูตรขั้นตอนการคิด:**
-  - Average Waiting Time ($AWT$)
-  - Average Turnaround Time ($ATAT$)
-  - Total Makespan (เวลารวมทั้งหมด)
-- **ระบบปรับแต่งค่าที่ยืดหยุ่น:**
-  - กำหนดจำนวนโปรเซสได้ตั้งแต่ 1 ถึง 10 โปรเซส
-  - ปุ่มสุ่มค่าเวลาประมวลผล (Randomize BT) พร้อมแอนิเมชัน
-  - ปุ่มกดค้างเพื่อเพิ่ม/ลดค่าต่อเนื่อง (Hold-to-repeat)
-- **สลับภาษาได้ 2 ภาษา (Dual Language):** รองรับภาษาไทย (TH) และภาษาอังกฤษ (EN) ทั้งหน้าจอและคำอธิบาย
-- **ระบบธีม 2 โหมด:** โหมดสว่าง (Light Mode) และโหมดมืด (Dark Mode)
+- **Automated Summary Statistics & Formulas:**
+  - Average Waiting Time ($AWT$) with full formula breakdown: e.g. `(0 + 6 + 14 + 21) / 4 = 10.25 ms`
+  - Average Turnaround Time ($ATAT$) with formula breakdown: e.g. `(6 + 14 + 21 + 24) / 4 = 16.25 ms`
+  - Total Makespan
+- **Tactile User Controls:**
+  - Dynamic process count configuration (supports 1 to 10 processes)
+  - Stepper buttons with hold-to-repeat acceleration
+  - Slot-machine cascade animation for randomizing Burst Times
+  - Form validation with error alerts
+- **Dual Language & Theme Support:**
+  - Instant toggle between Thai (TH) and English (EN)
+  - Smooth light and dark mode switching with liquid glass transition
 
 ---
 
-## 📐 ทฤษฎีและสูตรการคำนวณ ($AT = 0$)
+## 📐 Formulas & Theoretical Background ($AT = 0$)
 
-เนื่องจากแบบจำลองนี้กำหนดให้ทุกโปรเซสมาพร้อมกันที่เวลา $t = 0$ ($AT = 0$) จึงมีสูตรคำนวณดังนี้:
+In this simulator, all processes enter the ready queue simultaneously at timestamp $t = 0$ ($AT = 0$). The metrics are governed by the following formulas:
 
-| ค่าทางสถิติ | ตัวย่อ | นิยาม | สูตรการคำนวณ ($AT = 0$) |
+| Metric | Symbol | Definition | Formula ($AT = 0$) |
 | :--- | :---: | :--- | :--- |
-| **Burst Time** | $BT$ | เวลาที่โปรเซสต้องการใช้ซีพียู | กำหนดจากอินพุต (ms) |
-| **Start Time** | $ST$ | เวลาแรกที่โปรเซสเริ่มเข้าสู่ซีพียู | $ST$ แรกที่ได้รับ CPU |
-| **Completion Time** | $CT$ | เวลาที่โปรเซสประมวลผลเสร็จสิ้น | เวลาสิ้นสุดการทำงานทั้งหมด |
-| **Turnaround Time** | $TAT$ | เวลาตั้งแต่มาถึงจนทำงานเสร็จ | $TAT = CT - AT = CT$ |
-| **Waiting Time** | $WT$ | เวลารวมที่โปรเซสรอคอยในคิว | $WT = TAT - BT$ |
-| **Average Waiting Time** | $AWT$ | เวลารอคอยเฉลี่ยของทุกโปรเซส | $AWT = \frac{\sum WT}{N}$ |
-| **Average Turnaround Time** | $ATAT$ | เวลาการทำงานเสร็จเฉลี่ยของทุกโปรเซส | $ATAT = \frac{\sum TAT}{N}$ |
+| **Burst Time** | $BT$ | Total CPU time required by the process to complete execution | User input (ms) |
+| **Start Time** | $ST$ | The earliest timestamp when the process first receives CPU execution | First scheduled tick |
+| **Completion Time** | $CT$ | The timestamp at which the process finishes its entire execution | Final execution tick |
+| **Turnaround Time** | $TAT$ | Elapsed time from arrival to full completion | $TAT = CT - AT = CT$ |
+| **Waiting Time** | $WT$ | Total duration the process spends waiting in the ready queue | $WT = TAT - BT$ |
+| **Average Waiting Time** | $AWT$ | Mean waiting time across all $N$ processes | $AWT = \frac{1}{N} \sum_{i=1}^{N} WT_i$ |
+| **Average Turnaround Time** | $ATAT$ | Mean turnaround time across all $N$ processes | $ATAT = \frac{1}{N} \sum_{i=1}^{N} TAT_i$ |
 
 ---
 
-## 📂 โครงสร้างโปรเจกต์ (Project Structure)
+## 📂 Project Architecture
 
 ```text
 cpu-scheduler/
-├── index.html        # โครงสร้างหน้าเว็บ, ระบบ UI, พจนานุกรมแปลภาษา (i18n)
-├── styles.css        # สไตล์ Claymorphism, ระบบตัวแปรธีม (Light/Dark), Responsive Layout
-├── app.js            # เอนจินคำนวณตรรกะอัลกอริทึม (FCFS, SJF, RR) และตัวเชื่อมต่อ UI
-└── README.md         # เอกสารแนะนำและคู่มือการใช้งานโครงงาน
+├── index.html        # UI structure, claymorphism components, and bilingual i18n dictionaries
+├── styles.css        # Responsive layout, claymorphism styling tokens, and theme definitions
+├── app.js            # Core scheduling engine (FCFS, SJF, RR) and dynamic DOM rendering
+└── README.md         # Project documentation and theoretical reference
 ```
 
 ---
 
-## 🛠️ สแตกเทคโนโลยี (Tech Stack)
+## 🛠️ Technology Stack
 
-- **HTML5:** Semantic Elements, Accessibility (ARIA Labels)
-- **CSS3:** Custom Properties (Variables), Claymorphism Effects, Smooth Transitions & Keyframe Animations
-- **JavaScript (Vanilla ES6+):** Pure Scheduling Functions, Dynamic DOM Rendering, Event Delegation
-
----
-
-## 💻 วิธีการเปิดใช้งาน (How to Run)
-
-ไม่ต้องติดตั้ง Environment หรือ Dependency ใดๆ เพิ่มเติม:
-1. ทำการ Clone หรือ Download โฟลเดอร์โปรเจกต์
-2. ดับเบิลคลิกเปิดไฟล์ `index.html` ผ่านเว็บเบราว์เซอร์ใดก็ได้ เช่น Google Chrome, Microsoft Edge, Firefox, Safari
+- **HTML5:** Semantic architecture, accessible forms, ARIA attributes
+- **CSS3:** Custom properties (CSS variables), Claymorphism layered shadows, CSS animations
+- **JavaScript (Vanilla ES6+):** Modular algorithms, zero external dependencies, reactive DOM synchronization
 
 ---
 
-## 👥 ผู้จัดทำโครงงาน (Author & Contributors)
-- **Repository:** [nuuice5412/cpu-scheduler](https://github.com/nuuice5412/cpu-scheduler)
+## 💻 Getting Started
+
+No build tools, bundlers, or package installations are required:
+1. Clone or download this repository.
+2. Open `index.html` directly in any modern web browser (Google Chrome, Microsoft Edge, Mozilla Firefox, Safari).
