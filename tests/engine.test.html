@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engine tests — CPU Scheduling Simulator</title>
+  <style>
+    :root { color-scheme: light dark; }
+
+    body {
+      margin: 0;
+      padding: 28px 20px 48px;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #F4F5FA;
+      color: #1E2038;
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 860px; margin: 0 auto; }
+    h1 { font-size: 1.4rem; margin: 0 0 4px; }
+    p.sub { margin: 0 0 20px; color: #64748B; font-size: 0.92rem; }
+
+    #summary {
+      font-weight: 800;
+      font-size: 1.15rem;
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+    #summary.pass { background: #DCFCE7; color: #065F46; }
+    #summary.fail { background: #FFE4E6; color: #9F1239; }
+    #summary.loading { background: #E2E8F0; color: #334155; }
+
+    h2 {
+      font-size: 0.85rem;
+      margin: 22px 0 10px;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+    .badge {
+      flex: 0 0 auto;
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .row.ok .badge { background: #DCFCE7; color: #047857; }
+    .row.bad .badge { background: #FFE4E6; color: #BE123C; }
+    .detail { margin-top: 4px; font-size: 0.82rem; color: #64748B; word-break: break-word; }
+
+    .hint { margin-top: 26px; font-size: 0.85rem; color: #64748B; }
+    code { background: #E2E8F0; padding: 2px 6px; border-radius: 6px; font-size: 0.85em; }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #0D0F18; color: #F8FAFC; }
+      h1, p.sub, .hint { color: #94A3B8; }
+      h1 { color: #F8FAFC; }
+      .row { background: #1D2235; border-color: rgba(255, 255, 255, 0.08); }
+      h2 { color: #94A3B8; }
+      .detail { color: #94A3B8; }
+      #summary.pass { background: #022C22; color: #6EE7B7; }
+      #summary.fail { background: #4C0519; color: #FDA4AF; }
+      #summary.loading { background: #1D2235; color: #CBD5E1; }
+      code { background: #23283E; color: #E2E8F0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>Engine tests</h1>
+    <p class="sub">FCFS / SJF / Round Robin — รันในเบราว์เซอร์ ไม่ต้องติดตั้ง Node.js</p>
+
+    <div id="summary" class="loading">กำลังรัน…</div>
+    <div id="list"></div>
+
+    <p class="hint">
+      ชุดทดสอบเดียวกับ <code>node tests/engine.test.js</code> (ใช้ไฟล์ <code>tests/engine.spec.js</code> ร่วมกัน)<br>
+      ถ้าต้องการรันบน command line: ติดตั้ง Node.js LTS จาก nodejs.org แล้วรัน
+      <code>node tests/engine.test.js</code>
+    </p>
+  </div>
+
+  <script src="../app.js"></script>
+  <script src="engine.spec.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var summary = document.getElementById('summary');
+      var list = document.getElementById('list');
+
+      function esc(value) {
+        return String(value).replace(/[&<>"]/g, function (ch) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch];
+        });
+      }
+
+      var api = {
+        calculateFCFS: window.calculateFCFS,
+        calculateSJF: window.calculateSJF,
+        calculateRR: window.calculateRR
+      };
+
+      if (typeof window.runEngineSpecs !== 'function') {
+        summary.className = 'fail';
+        summary.textContent = 'โหลด engine.spec.js ไม่สำเร็จ';
+        document.body.setAttribute('data-test-result', 'load-error');
+        return;
+      }
+
+      var results = window.runEngineSpecs(api);
+      var passed = results.filter(function (r) { return r.pass; }).length;
+      var failed = results.length - passed;
+
+      var html = '';
+      var section = '';
+      results.forEach(function (r) {
+        if (r.section !== section) {
+          section = r.section;
+          html += '<h2>' + esc(section) + '</h2>';
+        }
+        html += '<div class="row ' + (r.pass ? 'ok' : 'bad') + '">' +
+          '<span class="badge">' + (r.pass ? 'PASS' : 'FAIL') + '</span>' +
+          '<div><div>' + esc(r.name) + '</div>';
+        if (!r.pass) {
+          if (r.expected !== undefined) {
+            html += '<div class="detail">expected: ' + esc(JSON.stringify(r.expected)) +
+              '<br>actual: ' + esc(JSON.stringify(r.actual)) + '</div>';
+          } else if (r.detail) {
+            html += '<div class="detail">' + esc(r.detail) + '</div>';
+          }
+        }
+        html += '</div></div>';
+      });
+      list.innerHTML = html;
+
+      summary.className = failed ? 'fail' : 'pass';
+      summary.textContent = failed
+        ? 'FAILED ' + failed + ' of ' + results.length
+        : 'ALL PASS (' + passed + ')';
+
+      document.body.setAttribute('data-test-result', failed ? 'fail' : 'pass');
+      document.body.setAttribute('data-test-count', String(results.length));
+      document.title = (failed ? 'FAIL ' : 'PASS ') + passed + '/' + results.length + ' — Engine tests';
+    })();
+  </script>
+</body>
+
+</html>

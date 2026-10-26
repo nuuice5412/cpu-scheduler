@@ -78,7 +78,9 @@ cpu-scheduler/
 ├── styles.css            # claymorphism tokens, dark theme, responsive + print styles
 ├── app.js                # scheduling engine (FCFS, SJF, RR) + DOM rendering
 ├── tests/
-│   └── engine.test.js    # engine regression tests (Node, no dependencies)
+│   ├── engine.spec.js    # the 51 assertions, shared by both runners
+│   ├── engine.test.js    # command-line runner (Node.js)
+│   └── engine.test.html  # browser runner — opens like a normal page, no install
 ├── package.json          # only a `test` script — no dependencies to install
 └── README.md
 ```
@@ -103,26 +105,26 @@ python -m http.server 8000
 
 ## ✅ Running the tests
 
-The engine has no DOM dependencies, so it can be tested straight from Node — no framework, no `npm install`:
+The same **51 assertions** (defined once in `tests/engine.spec.js`) can be run two ways.
+
+### Option 1 — In the browser (no installation needed)
+
+Open **`tests/engine.test.html`** — double-click it, or drag it into any browser. The page runs the specs against the real engine and shows `ALL PASS (51)` in green.
+
+### Option 2 — On the command line (requires Node.js)
 
 ```bash
-# run from the project root (the folder that contains index.html)
+# from the project root (the folder that contains index.html)
 node tests/engine.test.js
-```
 
-Or, if you are already inside `tests/`:
-
-```bash
+# or from inside tests/
 node engine.test.js
-```
 
-Or via npm (works because the project has no dependencies, so there is nothing to install):
-
-```bash
+# or via npm — there are no dependencies, so no npm install is needed
 npm test
 ```
 
-> The path in the command is resolved from your **current directory**. Running `node tests/engine.test.js` from inside `tests/` looks for `tests/tests/engine.test.js` and fails with `Cannot find module`.
+> If PowerShell answers `The term 'node' is not recognized`, Node.js is not installed (or not on `PATH`). Install the LTS build from [nodejs.org](https://nodejs.org), open a **new** terminal and verify with `node -v`. Until then, Option 1 works without Node.
 
 Expected output (51 assertions):
 
