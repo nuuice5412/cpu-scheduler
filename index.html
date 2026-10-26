@@ -495,7 +495,7 @@
           errInvalidTq: "ควอนตัมเวลา (Time Quantum Q) ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
           errEmptyBt: "กรุณากรอกข้อมูลให้ครบทุกโปรเซส (พบช่องว่างที่ {p})",
           errInvalidBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องเป็นจำนวนเต็มบวกที่มากกว่า 0",
-          errMaxBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องไม่เกิน 99 ms",
+          errMaxBt: "เวลาประมวลผล (Burst Time) ของ {p} ต้องไม่เกิน 50 ms",
           errMaxTq: "ควอนตัมเวลา (Time Quantum Q) ต้องไม่เกิน 20 ms",
           errProcMismatch: "จำนวนช่องกรอก Burst Time ({count} ช่อง) ไม่ตรงกับจำนวนโปรเซสที่ระบุ ({num}) กรุณากดปุ่มสุ่มหรือแก้จำนวนโปรเซสใหม่",
           glossary: [
@@ -574,7 +574,7 @@
           errInvalidTq: "Time Quantum (Q) must be a positive integer greater than 0.",
           errEmptyBt: "Please fill in Burst Time for all processes (missing at {p}).",
           errInvalidBt: "Burst Time for {p} must be a positive integer greater than 0.",
-          errMaxBt: "Burst Time for {p} must not exceed 99 ms.",
+          errMaxBt: "Burst Time for {p} must not exceed 50 ms.",
           errMaxTq: "Time Quantum (Q) must not exceed 20 ms.",
           errProcMismatch: "Burst Time fields ({count}) do not match the number of processes ({num}). Please adjust the process count.",
           glossary: [
@@ -955,8 +955,8 @@
             };
           }
 
-          // 5.1 Burst Time ต้องไม่เกิน 99 ms (ให้ตรงกับ attribute max และกันกราฟ Gantt ระเบิด)
-          if (bt > 99) {
+          // 5.1 Burst Time ต้องไม่เกิน 50 ms (ให้ตรงกับ attribute max และกันกราฟ Gantt ระเบิด)
+          if (bt > 50) {
             return {
               isValid: false,
               key: 'errMaxBt',
@@ -1098,7 +1098,7 @@
               <button type="button" class="bt-btn bt-btn-dec" aria-label="${decTitle}" title="${decTitle}">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </button>
-              <input type="number" class="burst-number-input" min="1" max="99" aria-label="${itemAria}">
+              <input type="number" class="burst-number-input" min="1" max="50" aria-label="${itemAria}">
               <button type="button" class="bt-btn bt-btn-inc" aria-label="${incTitle}" title="${incTitle}">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </button>
@@ -1143,7 +1143,7 @@
             attachHoldRepeat(btnInc, (isRapid) => {
               let val = parseInt(inp.value, 10);
               if (isNaN(val) || val < 1) val = 1;
-              if (val < 99) {
+              if (val < 50) {
                 inp.value = val + 1;
                 if (!isRapid) {
                   if (typeof animateCounter === 'function') animateCounter(inp, 'up');

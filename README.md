@@ -22,7 +22,7 @@ An interactive, responsive web-based simulator for CPU scheduling algorithms des
   - Average Turnaround Time ($ATAT$) with formula breakdown: e.g. `(6 + 14 + 21 + 24) / 4 = 16.25 ms`
   - Total Makespan
 - **Tactile User Controls:**
-  - Dynamic process count configuration (supports 1 to 10 processes, Burst Time 1–99 ms, Time Quantum 1–20 ms)
+  - Dynamic process count configuration (supports 1 to 10 processes, Burst Time 1–50 ms, Time Quantum 1–20 ms)
   - Stepper buttons with hold-to-repeat acceleration
   - Slot-machine cascade animation for randomizing Burst Times
   - Form validation with error alerts

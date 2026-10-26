@@ -520,21 +520,21 @@ body {
 
 /* 3D Stepper Capsule */
 .clay-stepper-capsule {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 5px 6px !important;
-  border-radius: var(--radius-pill) !important;
-  min-height: 52px !important;
-  position: relative !important;
-  background: rgba(240, 243, 248, 0.55) !important;
-  backdrop-filter: blur(14px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 6px;
+  border-radius: var(--radius-pill);
+  min-height: 52px;
+  position: relative;
+  background: rgba(240, 243, 248, 0.55);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: 
     0 4px 16px rgba(0, 0, 0, 0.04),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
+    inset 0 -1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .stepper-btn {
@@ -583,32 +583,32 @@ body {
 }
 
 .stepper-val-wrap {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex: 1 !important;
-  min-width: 0 !important;
-  position: relative !important;
-  padding: 0 10px !important;
-  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  padding: 0 10px;
+  height: 100%;
   cursor: text;
 }
 
 .stepper-input {
-  width: 56px !important;
-  min-width: 44px !important;
-  max-width: 72px !important;
-  text-align: center !important;
-  font-size: 1.35rem !important;
-  font-weight: 800 !important;
-  font-family: var(--font-heading) !important;
-  color: var(--text-main) !important;
-  background: transparent !important;
-  border: none !important;
-  outline: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  -moz-appearance: textfield !important;
+  width: 56px;
+  min-width: 44px;
+  max-width: 72px;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  -moz-appearance: textfield;
 }
 
 .stepper-input::-webkit-outer-spin-button,
@@ -618,16 +618,16 @@ body {
 }
 
 .stepper-unit {
-  position: absolute !important;
-  right: 14px !important;
-  font-size: 0.88rem !important;
-  font-weight: 700 !important;
-  color: var(--text-muted) !important;
-  white-space: nowrap !important;
-  pointer-events: none !important;
-  user-select: none !important;
+  position: absolute;
+  right: 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
   letter-spacing: 0.01em;
-  display: inline-block !important;
+  display: inline-block;
 }
 
 /* ==========================================================================
@@ -961,11 +961,11 @@ body {
   transform: scale(1.1);
 }
 
-/* Error Field Highlight */
+/* Error Field Highlight (specificity สูงกว่า .clay-stepper-capsule จึงไม่ต้องใช้ !important) */
 .inset-input-wrapper.input-field-error,
 .burst-pill-card.input-field-error {
-  border-color: #F43F5E !important;
-  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.28) !important;
+  border-color: #F43F5E;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.28);
   animation: clayInputPulse 0.35s ease;
 }
 
@@ -1575,12 +1575,20 @@ body {
 }
 
 [data-theme="dark"] .clay-stepper-capsule {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
   box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.35),
     inset 0 1px 2px rgba(255, 255, 255, 0.18),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.4) !important;
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* dark capsule มี specificity สูงกว่า :focus-within ด้านบน → เติม rule นี้ให้ focus ring ยังเห็นได้ใน dark mode
+   (วางไว้ก่อน error rule เพื่อให้สถานะ error ยังชนะเมื่อช่องไม่ถูกต้อง) */
+[data-theme="dark"] .inset-input-wrapper:focus-within,
+[data-theme="dark"] .bt-stepper-wrap:focus-within {
+  border-color: var(--clay-purple);
+  box-shadow: var(--clay-inset-deep), 0 0 0 4px rgba(139, 92, 246, 0.28);
 }
 
 /* Dark Mode Stepper Pulse Overrides */
@@ -1864,8 +1872,8 @@ body {
 
 [data-theme="dark"] .inset-input-wrapper.input-field-error,
 [data-theme="dark"] .burst-pill-card.input-field-error {
-  border-color: #FB7185 !important;
-  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.35) !important;
+  border-color: #FB7185;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.35);
 }
 
 /* ==========================================================================
