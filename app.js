@@ -238,6 +238,9 @@
      3. DOM Rendering & UI Synchronization
      ========================================================================== */
 
+  // ผลลัพธ์ล่าสุดที่คำนวณสำเร็จ (ใช้ re-render ด้วยภาษาใหม่โดยไม่ต้องคำนวณซ้ำ)
+  let lastResult = null;
+
   /**
    * ดึงข้อมูล Input จากหน้าเว็บ ป้อนเข้าสู่อัลกอริทึม และแสดงผลบนหน้าจอ
    * @param {string} algoKey ('fcfs' | 'sjf' | 'rr')
@@ -276,8 +279,17 @@
 
     if (!result) return;
 
-    // 3. นำผลลัพธ์ไปเรนเดอร์ลง UI ของหน้าเว็บ
+    // 3. เก็บผลลัพธ์ล่าสุดไว้ แล้วเรนเดอร์ลง UI ของหน้าเว็บ
+    lastResult = result;
     renderSimulationToUI(result);
+  }
+
+  /**
+   * เรนเดอร์ผลลัพธ์ล่าสุดซ้ำด้วยภาษาปัจจุบัน (ไม่คำนวณใหม่)
+   * ใช้ตอนสลับภาษาระหว่างที่ข้อมูลในฟอร์มยังไม่ถูกต้อง
+   */
+  function rerenderLastResult() {
+    if (lastResult) renderSimulationToUI(lastResult);
   }
 
   /**
@@ -402,6 +414,7 @@
   window.calculateSJF = calculateSJF;
   window.calculateRR = calculateRR;
   window.runSchedulingAlgorithm = runSchedulingAlgorithm;
+  window.rerenderLastResult = rerenderLastResult;
 
   // หมายเหตุ: การคำนวณรอบแรกถูกสั่งจาก index.html (initBurstInputs → updateLanguage)
   // จึงไม่ต้องใช้ setTimeout รอ DOM แบบเดิมอีก และไม่เกิด race ระหว่างสองไฟล์

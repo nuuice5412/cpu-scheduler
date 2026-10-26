@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0D0F18" media="(prefers-color-scheme: dark)">
   <link rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%238B5CF6'/%3E%3Crect x='8' y='8' width='8' height='8' rx='2' fill='%23FFFFFF'/%3E%3C/svg%3E">
-  <title id="doc-title">โปรแกรมจำลองการจัดคิวซีพียู - FCFS, SJF & Round Robin</title>
+  <title>โปรแกรมจำลองการจัดคิวซีพียู - FCFS, SJF & Round Robin</title>
   <meta name="description" id="doc-meta-desc"
     content="โปรแกรมจำลองอัลกอริทึมการจัดตารางเวลาซีพียู FCFS, SJF และ Round Robin (AT = 0) สไตล์ Claymorphism ผิวสัมผัสสามมิติ">
   <!-- Google Fonts: Prompt, Plus Jakarta Sans & Outfit -->
@@ -137,10 +137,10 @@
     <!-- Simulator Layout -->
     <div class="sim-grid">
       <!-- Left / Input Section (Clay Card) -->
-      <section class="clay-card input-card" aria-labelledby="input-heading">
+      <section class="clay-card" aria-labelledby="input-heading">
         <div class="card-header">
           <div class="card-title-group">
-            <span class="step-indicator" id="step-1-indicator">1</span>
+            <span class="step-indicator">1</span>
             <h2 id="input-heading" class="card-title">กำหนดค่าและเวลาประมวลผล</h2>
           </div>
           <span class="badge-status" id="badge-status-at">เวลามาถึง (AT) = 0</span>
@@ -167,7 +167,7 @@
             </div>
 
             <div class="input-field-group">
-              <label for="time-quantum" class="field-label" id="label-time-quantum">
+              <label for="time-quantum" class="field-label">
                 <span id="label-tq-text">ควอนตัมเวลา (Time Quantum Q)</span>
                 <span class="label-hint" id="label-hint-rr">สำหรับ Round Robin</span>
               </label>
@@ -299,7 +299,7 @@
                 </div>
                 <div class="metric-value-row">
                   <span class="metric-num-val" id="avg-waiting-time">10.25</span>
-                  <span class="metric-unit-text" id="unit-awt">ms</span>
+                  <span class="metric-unit-text">ms</span>
                 </div>
                 <div class="metric-calc-formula" id="awt-formula">
                   (0 + 6 + 14 + 21) / 4 = 10.25 ms
@@ -322,7 +322,7 @@
                 </div>
                 <div class="metric-value-row">
                   <span class="metric-num-val" id="avg-turnaround-time">16.25</span>
-                  <span class="metric-unit-text" id="unit-atat">ms</span>
+                  <span class="metric-unit-text">ms</span>
                 </div>
                 <div class="metric-calc-formula" id="atat-formula">
                   (6 + 14 + 21 + 24) / 4 = 16.25 ms
@@ -348,7 +348,7 @@
                 </svg>
                 <span class="section-heading-text" id="label-gantt-title">แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)</span>
               </div>
-              <span class="makespan-pill" id="makespan-badge">
+              <span class="makespan-pill">
                 <span id="label-makespan-text">Total Makespan:</span>
                 <strong id="total-makespan-val">24 ms</strong>
               </span>
@@ -782,6 +782,10 @@
         const inputCheck = validateSchedulingInputs();
 
         if (!inputCheck.isValid) {
+          // ข้อมูลไม่ครบ: คงผลเดิมไว้ แต่ render ซ้ำด้วยภาษาใหม่ เพื่อให้ label ในตารางตรงกับ UI
+          if (typeof window.rerenderLastResult === 'function') {
+            window.rerenderLastResult();
+          }
           showValidationError(inputCheck, inputCheck.input);
         } else {
           hideValidationError();
@@ -1265,13 +1269,24 @@
         const tabList = Array.prototype.slice.call(tabs);
 
         /**
-         * เปิดใช้งานแท็บอัลกอริทึม: อัปเดต active/aria-selected/tabindex, glider,
-         * aria-labelledby ของ tabpanel แล้วค่อยคำนวณผล (ถ้าต้องการ)
+         * เปิดใช้งานแท็บอัลกอริทึม: validate ก่อน — ถ้าข้อมูลไม่ถูกต้องจะไม่สลับแท็บ
+         * (กันอาการ "แท็บขึ้น SJF แต่ตารางยังเป็นผลของ FCFS")
          * @param {Element} tabEl แท็บที่ต้องการเปิด
          * @param {boolean} shouldRender true = คำนวณผลลัพธ์ใหม่ด้วย engine
+         * @returns {boolean} true เมื่อสลับแท็บสำเร็จ
          */
         function activateTab(tabEl, shouldRender) {
-          if (!tabEl) return;
+          if (!tabEl) return false;
+
+          if (shouldRender) {
+            const check = validateSchedulingInputs();
+            if (!check.isValid) {
+              showValidationError(check, check.input);
+              return false;
+            }
+            hideValidationError();
+          }
+
           tabList.forEach(t => {
             const isActive = t === tabEl;
             t.classList.toggle('active', isActive);
@@ -1280,16 +1295,11 @@
           });
           if (panel) panel.setAttribute('aria-labelledby', tabEl.id);
           updateCapsuleGlider(false);
+
           if (shouldRender) {
-            // ต้อง validate ก่อน ไม่งั้นการสลับแท็บจะคำนวณจากค่าที่ถูกบังคับ (BT->1, TQ->2) เงียบ ๆ
-            const check = validateSchedulingInputs();
-            if (!check.isValid) {
-              showValidationError(check, check.input);
-              return;
-            }
-            hideValidationError();
             renderResultsFor(tabEl.getAttribute('data-algorithm') || 'fcfs');
           }
+          return true;
         }
 
         tabList.forEach(tab => {
@@ -1310,8 +1320,13 @@
             if (e.key === 'ArrowLeft') next = (current - 1 + tabList.length) % tabList.length;
             if (e.key === 'Home') next = 0;
             if (e.key === 'End') next = tabList.length - 1;
-            tabList[next].focus();
-            activateTab(tabList[next], true);
+            if (activateTab(tabList[next], true)) {
+              tabList[next].focus();
+            } else {
+              // สลับไม่ได้ (ข้อมูลไม่ถูกต้อง) → คืนโฟกัสให้แท็บที่ active เพื่อไม่ให้ focus/active หลุดกัน
+              const activeTab = document.querySelector('.capsule-tab.active');
+              if (activeTab) activeTab.focus();
+            }
           });
         }
 
