@@ -1562,36 +1562,20 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* กลุ่มปุ่ม/ป้ายท้ายหัวข้อตาราง + ปุ่มส่งออก CSV */
-.table-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+/* ปุ่มส่งออก CSV — อยู่ในแถวปุ่มหลัก (หลังปุ่มรีเซ็ต) ให้เห็นได้ทันที */
 .btn-export {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border: 1px solid rgba(139, 92, 246, 0.35);
-  border-radius: var(--radius-pill);
   background: var(--bg-card);
   color: var(--clay-purple-dark);
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(166, 175, 195, 0.22);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  border: 2px solid rgba(139, 92, 246, 0.45);
+  box-shadow: 0 8px 18px rgba(166, 175, 195, 0.28), inset 2px 2px 5px rgba(255, 255, 255, 0.9);
+  /* padding หักลบขอบ 2px เพื่อให้สูงเท่าปุ่มอื่นในแถวเดียวกัน */
+  padding: 12px 20px;
+  flex: 0 0 auto;
 }
 .btn-export:hover {
-  transform: translateY(-1px);
   background: var(--bg-card-alt);
-  box-shadow: 0 6px 14px rgba(166, 175, 195, 0.28);
+  border-color: rgba(139, 92, 246, 0.75);
 }
-.btn-export:active { transform: translateY(0); }
-.btn-export-icon { font-size: 0.95rem; line-height: 1; }
 
 /* แถว AVG WT ท้ายตาราง (ข้อกำหนด: ตารางต้องมีค่าเฉลี่ยเวลารอคอย) */
 .clay-data-table tfoot .avg-row td {
