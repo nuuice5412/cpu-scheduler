@@ -1562,19 +1562,38 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* ปุ่มส่งออก CSV — อยู่ในแถวปุ่มหลัก (หลังปุ่มรีเซ็ต) ให้เห็นได้ทันที */
+/* ปุ่มส่งออก CSV — อยู่ใต้แถว AVG WT ต่อท้ายตาราง (เห็นตอนเลื่อนลงมาดูผล) */
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.table-actions-hint {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
 .btn-export {
-  background: var(--bg-card);
+  background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
   color: var(--clay-purple-dark);
-  border: 2px solid rgba(139, 92, 246, 0.45);
-  box-shadow: 0 8px 18px rgba(166, 175, 195, 0.28), inset 2px 2px 5px rgba(255, 255, 255, 0.9);
-  /* padding หักลบขอบ 2px เพื่อให้สูงเท่าปุ่มอื่นในแถวเดียวกัน */
-  padding: 12px 20px;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.18), inset 2px 2px 5px rgba(255, 255, 255, 0.85);
+  padding: 11px 20px;
+  font-size: 0.92rem;
   flex: 0 0 auto;
 }
 .btn-export:hover {
-  background: var(--bg-card-alt);
-  border-color: rgba(139, 92, 246, 0.75);
+  filter: brightness(1.04);
+  border-color: rgba(139, 92, 246, 0.7);
+}
+[data-theme="dark"] .btn-export {
+  background: rgba(167, 139, 250, 0.18);
+  color: var(--clay-purple-light);
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), inset 2px 2px 5px rgba(255, 255, 255, 0.08);
 }
 
 /* แถว AVG WT ท้ายตาราง (ข้อกำหนด: ตารางต้องมีค่าเฉลี่ยเวลารอคอย) */

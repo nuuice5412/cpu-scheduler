@@ -249,16 +249,6 @@
               </svg>
               <span id="btn-reset-text">รีเซ็ต</span>
             </button>
-
-            <button type="button" id="btn-export" class="clay-btn btn-export" title="ดาวน์โหลดผลลัพธ์เป็น CSV">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              <span id="btn-export-text">ส่งออก CSV</span>
-            </button>
           </div>
         </form>
       </section>
@@ -428,6 +418,20 @@
                 </tfoot>
               </table>
             </div>
+
+            <!-- ส่งออกผลลัพธ์: อยู่ใต้แถว AVG WT ต่อท้ายตาราง (เห็นตอนเลื่อนลงมาดูผล) -->
+            <div class="table-actions">
+              <span class="table-actions-hint" id="export-hint">แนบผลลัพธ์นี้ไปกับรายงานได้</span>
+              <button type="button" id="btn-export" class="clay-btn btn-export" title="ดาวน์โหลดผลลัพธ์เป็น CSV">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span id="btn-export-text">ส่งออก CSV</span>
+              </button>
+            </div>
           </div>
 
           <!-- Glossary & Formula Summary Accordion -->
@@ -526,6 +530,7 @@
           tableAvgWt: "AVG WT (ค่าเฉลี่ยเวลารอคอย)",
           btnExportText: "ส่งออก CSV",
           btnExportTitle: "ดาวน์โหลดผลลัพธ์ล่าสุดเป็นไฟล์ CSV",
+          exportHint: "แนบผลลัพธ์นี้ไปกับรายงานได้",
           labelGanttTitle: "แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)",
           labelMakespanText: "Total Makespan (เวลารวม):",
           ganttChartAria: "แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู",
@@ -615,6 +620,7 @@
           tableAvgWt: "AVG WT (average waiting time)",
           btnExportText: "Export CSV",
           btnExportTitle: "Download the latest results as a CSV file",
+          exportHint: "Attach these results to your report",
           labelGanttTitle: "Gantt Timeline Visualization",
           labelMakespanText: "Total Makespan:",
           ganttChartAria: "Gantt timeline chart displaying CPU execution sequence",
@@ -698,6 +704,7 @@
           'compare-note': t.compareNote,
           'table-avg-label': t.tableAvgWt,
           'btn-export-text': t.btnExportText,
+          'export-hint': t.exportHint,
           'label-gantt-title': t.labelGanttTitle,
           'label-makespan-text': t.labelMakespanText,
           'label-table-title': t.labelTableTitle,
