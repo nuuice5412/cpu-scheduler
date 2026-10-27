@@ -291,6 +291,20 @@
   }
 
   /**
+   * คำนวณผลของอัลกอริทึมที่ระบุ จากค่าที่กรอกอยู่ในฟอร์มตอนนี้
+   * ใช้โดยการส่งออก CSV (เลือกทีละอัลกอริทึมหรือรวมทั้งสาม)
+   * @param {string} algoKey 'fcfs' | 'sjf' | 'rr'
+   * @returns {Object|null}
+   */
+  function computeResultFor(algoKey) {
+    const { processes, tq } = readSchedulingInputs();
+    if (!processes.length) return null;
+    if (algoKey === 'sjf') return calculateSJF(processes);
+    if (algoKey === 'rr') return calculateRR(processes, tq);
+    return calculateFCFS(processes);
+  }
+
+  /**
    * ดึงข้อมูล Input จากหน้าเว็บ ป้อนเข้าสู่อัลกอริทึม และแสดงผลบนหน้าจอ
    * @param {string} algoKey ('fcfs' | 'sjf' | 'rr')
    */
@@ -464,6 +478,7 @@
   window.runSchedulingAlgorithm = runSchedulingAlgorithm;
   window.rerenderLastResult = rerenderLastResult;
   window.summariseAlgorithms = summariseAlgorithms;
+  window.computeResultFor = computeResultFor;
   window.getLastResult = () => lastResult;
 
   // หมายเหตุ: การคำนวณรอบแรกถูกสั่งจาก index.html (initBurstInputs → updateLanguage)

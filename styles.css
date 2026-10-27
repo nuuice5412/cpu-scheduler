@@ -1596,6 +1596,66 @@ body {
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), inset 2px 2px 5px rgba(255, 255, 255, 0.08);
 }
 
+/* เมนูส่งออก: เลือกอัลกอริทึมเดียว หรือรวมทั้งสาม */
+.export-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.export-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 30;
+  min-width: 250px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  box-shadow: 0 18px 36px rgba(60, 52, 100, 0.22), 0 2px 6px rgba(60, 52, 100, 0.14);
+}
+.export-menu[hidden] { display: none; }
+.export-menu-label {
+  padding: 4px 10px 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+.export-menu-sep {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--bg-inset);
+}
+.export-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.export-item:hover,
+.export-item:focus-visible { background: var(--bg-inset); }
+.export-item.is-active { color: var(--clay-purple-dark); }
+.export-item--all .export-item-name { color: var(--clay-purple-dark); }
+.export-item-hint {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* แถว AVG WT ท้ายตาราง (ข้อกำหนด: ตารางต้องมีค่าเฉลี่ยเวลารอคอย) */
 .clay-data-table tfoot .avg-row td {
   background: var(--bg-inset);
