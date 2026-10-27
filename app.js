@@ -250,6 +250,47 @@
   let lastResult = null;
 
   /**
+   * อ่านข้อมูลจากฟอร์มแล้วคืนรายการโปรเซส + Time Quantum
+   * ใช้ร่วมกันระหว่างการคำนวณปกติและแถบเปรียบเทียบอัลกอริทึม
+   * @returns {{processes: Array<{id: string, numId: number, bt: number}>, tq: number}}
+   */
+  function readSchedulingInputs() {
+    const tqInput = document.getElementById('time-quantum');
+    const tq = tqInput ? (parseInt(tqInput.value, 10) || 2) : 2;
+
+    const processes = Array.from(document.querySelectorAll('.burst-number-input')).map((inp, idx) => {
+      let bt = parseInt(inp.value, 10);
+      if (isNaN(bt) || bt <= 0) bt = 1;
+      const numId = idx + 1;
+      return { id: `P${numId}`, numId: numId, bt: bt };
+    });
+
+    return { processes, tq };
+  }
+
+  /**
+   * สรุปผลของทั้งสามอัลกอริทึมจากข้อมูลชุดเดียวกัน (สำหรับแถบเปรียบเทียบ)
+   * @returns {Array<{key: string, awt: number, atat: number, makespan: number}>}
+   */
+  function summariseAlgorithms() {
+    const { processes, tq } = readSchedulingInputs();
+    if (!processes.length) return [];
+
+    const summarise = (key, result) => ({
+      key: key,
+      awt: parseFloat(result.awt),
+      atat: parseFloat(result.atat),
+      makespan: result.totalMakespanNum
+    });
+
+    return [
+      summarise('fcfs', calculateFCFS(processes)),
+      summarise('sjf', calculateSJF(processes)),
+      summarise('rr', calculateRR(processes, tq))
+    ];
+  }
+
+  /**
    * ดึงข้อมูล Input จากหน้าเว็บ ป้อนเข้าสู่อัลกอริทึม และแสดงผลบนหน้าจอ
    * @param {string} algoKey ('fcfs' | 'sjf' | 'rr')
    */
@@ -260,22 +301,8 @@
       || (activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs')
       || 'fcfs';
 
-    // 1. ตรวจสอบและดึงข้อมูลจากหน้าเว็บ
-    const burstInputs = document.querySelectorAll('.burst-number-input');
-    const tqInput = document.getElementById('time-quantum');
-    const tq = tqInput ? (parseInt(tqInput.value, 10) || 2) : 2;
-
-    const processes = [];
-    burstInputs.forEach((inp, idx) => {
-      let bt = parseInt(inp.value, 10);
-      if (isNaN(bt) || bt <= 0) bt = 1;
-      const numId = idx + 1;
-      processes.push({
-        id: `P${numId}`,
-        numId: numId,
-        bt: bt
-      });
-    });
+    // 1. ดึงข้อมูลจากหน้าเว็บ (โปรเซสที่ bt <= 0 จะถูกบังคับเป็น 1)
+    const { processes, tq } = readSchedulingInputs();
 
     if (processes.length === 0) return;
 
@@ -432,6 +459,7 @@
   window.calculateRR = calculateRR;
   window.runSchedulingAlgorithm = runSchedulingAlgorithm;
   window.rerenderLastResult = rerenderLastResult;
+  window.summariseAlgorithms = summariseAlgorithms;
 
   // หมายเหตุ: การคำนวณรอบแรกถูกสั่งจาก index.html (initBurstInputs → updateLanguage)
   // จึงไม่ต้องใช้ setTimeout รอ DOM แบบเดิมอีก และไม่เกิด race ระหว่างสองไฟล์

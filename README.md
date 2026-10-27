@@ -27,6 +27,7 @@ An interactive, responsive CPU-scheduling simulator built with vanilla HTML/CSS/
 - **Gantt timeline** — the bar is a CSS grid whose columns are `BT fr` units, so every block edge lines up exactly with its timestamp. With more than 8 slices the chart switches to a compact mode (smaller radius, slice durations hidden) and the axis thins out its labels instead of overlapping them.
 - **Metrics table** — Arrival Time (always 0), Burst Time, Start Time, Completion Time, Turnaround Time, Waiting Time and status for every process.
 - **Summary cards** — Average Waiting Time and Average Turnaround Time with the full arithmetic, e.g. `(0 + 6 + 14 + 21) / 4 = 10.25 ms`, plus the total makespan.
+- **Algorithm comparison** — FCFS, SJF and Round Robin are all computed from the same input and shown side by side (AWT, ATAT and makespan); the lowest AWT is highlighted and the algorithm currently on screen is marked.
 
 ### Input & controls
 

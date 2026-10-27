@@ -1193,12 +1193,14 @@ body {
 
 /* สถานะ "ผลลัพธ์เก่า": ผู้ใช้แก้ค่าแต่ยังไม่กดคำนวณ → ลดความเด่นของผลลัพธ์ */
 #panel-content.is-stale .metrics-row,
+#panel-content.is-stale .compare-strip,
 #panel-content.is-stale .algo-explanation-box,
 #panel-content.is-stale .gantt-section,
 #panel-content.is-stale .table-section {
   opacity: 0.55;
 }
 #panel-content .metrics-row,
+#panel-content .compare-strip,
 #panel-content .algo-explanation-box,
 #panel-content .gantt-section,
 #panel-content .table-section {
@@ -1206,6 +1208,112 @@ body {
 }
 #panel-content.is-stale .results-hint::before {
   background: #F59E0B; /* ส้ม = ต้องคำนวณใหม่ */
+}
+
+/* ==========================================================================
+   Algorithm Comparison Strip
+   เทียบ FCFS / SJF / RR ด้วยข้อมูลชุดเดียวกัน (ตัวเลขมาจาก engine จริง)
+   ========================================================================== */
+.compare-strip {
+  background: var(--bg-card-alt);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--clay-card-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+.compare-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.compare-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+.compare-note {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.compare-card {
+  background: var(--bg-card);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  box-shadow: 0 6px 14px rgba(166, 175, 195, 0.18);
+}
+.compare-card.is-active {
+  border-color: rgba(139, 92, 246, 0.45);
+}
+.compare-card.is-best {
+  border-color: rgba(52, 211, 153, 0.7);
+  background:
+    linear-gradient(180deg, rgba(52, 211, 153, 0.1), transparent 62%),
+    var(--bg-card);
+}
+.compare-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.compare-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+.compare-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #047857;
+  background: rgba(52, 211, 153, 0.18);
+  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.compare-badge--muted {
+  color: var(--text-muted);
+  background: var(--bg-inset);
+}
+.compare-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+.compare-metrics dt {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+.compare-metrics dd {
+  margin: 2px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+/* แถบเปรียบเทียบจัดเรียงเป็นคอลัมน์เดียวบนจอเล็ก */
+@media (max-width: 720px) {
+  .compare-grid { grid-template-columns: 1fr; }
 }
 
 /* ==========================================================================
