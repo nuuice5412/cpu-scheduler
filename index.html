@@ -382,9 +382,15 @@
               <div class="section-title-wrap">
                 <span class="section-heading-text" id="label-table-title">ตารางวิเคราะห์การทำงานอย่างละเอียด (Detailed Execution Metrics)</span>
               </div>
-              <span class="formula-hint-badge" id="formula-hint-text">
-                TAT = CT - AT = CT &bull; WT = TAT - BT
-              </span>
+              <div class="table-header-actions">
+                <span class="formula-hint-badge" id="formula-hint-text">
+                  TAT = CT - AT = CT &bull; WT = TAT - BT
+                </span>
+                <button type="button" class="btn-export" id="btn-export" title="ดาวน์โหลดผลลัพธ์เป็น CSV">
+                  <span class="btn-export-icon" aria-hidden="true">⇩</span>
+                  <span id="btn-export-text">ส่งออก CSV</span>
+                </button>
+              </div>
             </div>
 
             <div class="table-outer-clay">
@@ -408,6 +414,14 @@
                 <tbody id="results-table-body">
                   <!-- Populated dynamically -->
                 </tbody>
+                <!-- แถวสรุป: ค่าเฉลี่ยเวลารอคอย (AVG WT) — ตามข้อกำหนดให้ตารางมี AVG WT -->
+                <tfoot>
+                  <tr class="avg-row">
+                    <td colspan="6" class="avg-label" id="table-avg-label">AVG WT (ค่าเฉลี่ยเวลารอคอย)</td>
+                    <td class="avg-value"><span id="table-avg-wt">0.00</span> <span class="unit-text">ms</span></td>
+                    <td class="avg-note">AVG</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -505,6 +519,9 @@
           compareNote: "คำนวณจากข้อมูลชุดเดียวกับที่กรอก · AWT ต่ำสุด = ดีที่สุด",
           compareBest: "AWT ต่ำสุด",
           compareCurrent: "กำลังดูอยู่",
+          tableAvgWt: "AVG WT (ค่าเฉลี่ยเวลารอคอย)",
+          btnExportText: "ส่งออก CSV",
+          btnExportTitle: "ดาวน์โหลดผลลัพธ์ล่าสุดเป็นไฟล์ CSV",
           labelGanttTitle: "แผนภูมิแกนต์แสดงลำดับเวลา (Gantt Timeline Visualization)",
           labelMakespanText: "Total Makespan (เวลารวม):",
           ganttChartAria: "แผนภูมิแกนต์แสดงลำดับการทำงานของซีพียู",
@@ -591,6 +608,9 @@
           compareNote: "Computed from the same input above · lowest AWT is best",
           compareBest: "Lowest AWT",
           compareCurrent: "Viewing now",
+          tableAvgWt: "AVG WT (average waiting time)",
+          btnExportText: "Export CSV",
+          btnExportTitle: "Download the latest results as a CSV file",
           labelGanttTitle: "Gantt Timeline Visualization",
           labelMakespanText: "Total Makespan:",
           ganttChartAria: "Gantt timeline chart displaying CPU execution sequence",
@@ -672,6 +692,8 @@
           'results-hint': t.resultsHint,
           'compare-title': t.compareTitle,
           'compare-note': t.compareNote,
+          'table-avg-label': t.tableAvgWt,
+          'btn-export-text': t.btnExportText,
           'label-gantt-title': t.labelGanttTitle,
           'label-makespan-text': t.labelMakespanText,
           'label-table-title': t.labelTableTitle,
@@ -753,6 +775,12 @@
         if (btnTqInc) {
           btnTqInc.title = t.btnIncTqTitle;
           btnTqInc.setAttribute('aria-label', t.btnIncTqTitle);
+        }
+
+        const btnExportEl = document.getElementById('btn-export');
+        if (btnExportEl) {
+          btnExportEl.title = t.btnExportTitle;
+          btnExportEl.setAttribute('aria-label', t.btnExportTitle);
         }
 
         const burstContainer = document.getElementById('burst-inputs-container');
@@ -1121,6 +1149,64 @@
               </dl>
             </div>`;
         }).join('');
+      }
+
+      /** ครอบค่าสำหรับ CSV (ใส่ quote เมื่อมี comma, quote หรือขึ้นบรรทัดใหม่) */
+      function csvCell(value) {
+        const text = String(value == null ? '' : value);
+        return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+      }
+
+      /**
+       * สร้างเนื้อหา CSV จากผลลัพธ์ล่าสุด
+       * ประกอบด้วย ตารางรายละเอียด + ค่าเฉลี่ย + ตารางเปรียบเทียบทั้งสามอัลกอริทึม
+       */
+      function buildResultCsv() {
+        const result = typeof window.getLastResult === 'function' ? window.getLastResult() : null;
+        if (!result) return '';
+
+        const algoNames = { fcfs: 'FCFS', sjf: 'SJF', rr: 'Round Robin' };
+        const lines = [];
+        const addRow = (cells) => lines.push(cells.map(csvCell).join(','));
+
+        addRow(['CPU Scheduling Simulator (AT = 0)']);
+        addRow(['Algorithm', algoNames[result.algoKey] || result.algoKey]);
+        addRow(['AWT (ms)', result.awt, 'ATAT (ms)', result.atat, 'Makespan (ms)', result.totalMakespanNum]);
+        lines.push('');
+        addRow(['Process', 'Arrival Time (AT)', 'Burst Time (BT)', 'Start Time (ST)',
+          'Completion Time (CT)', 'Turnaround Time (TAT)', 'Waiting Time (WT)']);
+        result.rows.forEach((r) => addRow([r.name, r.at, r.bt, r.st, r.ct, r.tat, r.wt]));
+        addRow(['AVG WT', '', '', '', '', '', result.awt]);
+
+        if (lastComparison && lastComparison.length) {
+          lines.push('');
+          addRow(['Comparison (same input)']);
+          addRow(['Algorithm', 'AWT (ms)', 'ATAT (ms)', 'Makespan (ms)']);
+          lastComparison.forEach((s) => addRow([
+            algoNames[s.key] || s.key, s.awt.toFixed(2), s.atat.toFixed(2), s.makespan
+          ]));
+        }
+
+        return lines.join('\r\n');
+      }
+
+      /** ดาวน์โหลดผลลัพธ์ล่าสุดเป็น .csv (เติม BOM เพื่อให้ Excel อ่านภาษาไทยถูกต้อง) */
+      function exportResultsCsv() {
+        const csv = buildResultCsv();
+        if (!csv) return;
+
+        const activeTab = document.querySelector('.capsule-tab.active');
+        const algoKey = activeTab ? activeTab.getAttribute('data-algorithm') : 'fcfs';
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'cpu-scheduling-' + (algoKey || 'fcfs') + '-'
+          + new Date().toISOString().slice(0, 10) + '.csv';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
       // ปุ่มกดค้าง: เก็บเฉพาะ "ตัวหยุด" ที่ active อยู่ตัวเดียว
@@ -1688,6 +1774,12 @@
               markResultsStale();
             }
           });
+        }
+
+        // ปุ่มส่งออกผลลัพธ์เป็น CSV
+        const btnExport = document.getElementById('btn-export');
+        if (btnExport) {
+          btnExport.addEventListener('click', exportResultsCsv);
         }
 
         // Randomize BT Button with Cascade Slot Machine Roll

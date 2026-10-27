@@ -28,6 +28,8 @@ An interactive, responsive CPU-scheduling simulator built with vanilla HTML/CSS/
 - **Metrics table** — Arrival Time (always 0), Burst Time, Start Time, Completion Time, Turnaround Time, Waiting Time and status for every process.
 - **Summary cards** — Average Waiting Time and Average Turnaround Time with the full arithmetic, e.g. `(0 + 6 + 14 + 21) / 4 = 10.25 ms`, plus the total makespan.
 - **Algorithm comparison** — FCFS, SJF and Round Robin are all computed from the same input and shown side by side (AWT, ATAT and makespan); the lowest AWT is highlighted and the algorithm currently on screen is marked.
+- **AVG WT footer** — the table ends with an average-waiting-time row, so the requested `AVG WT` value is part of the table itself.
+- **CSV export** — one click downloads the current view (per-process table, averages and the three-algorithm comparison) as a UTF-8 CSV that keeps Thai text readable in Excel.
 
 ### Input & controls
 

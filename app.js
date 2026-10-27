@@ -351,6 +351,10 @@
 
     if (awtEl) awtEl.textContent = result.awt;
     if (atatEl) atatEl.textContent = result.atat;
+
+    // แถว AVG WT ท้ายตาราง (ข้อกำหนด: ตารางต้องมีค่าเฉลี่ยเวลารอคอย)
+    const tableAvgEl = document.getElementById('table-avg-wt');
+    if (tableAvgEl) tableAvgEl.textContent = result.awt;
     if (awtFormulaEl) awtFormulaEl.textContent = result.awtFormula;
     if (atatFormulaEl) atatFormulaEl.textContent = result.atatFormula;
     if (makespanEl) makespanEl.textContent = result.makespan;
@@ -460,6 +464,7 @@
   window.runSchedulingAlgorithm = runSchedulingAlgorithm;
   window.rerenderLastResult = rerenderLastResult;
   window.summariseAlgorithms = summariseAlgorithms;
+  window.getLastResult = () => lastResult;
 
   // หมายเหตุ: การคำนวณรอบแรกถูกสั่งจาก index.html (initBurstInputs → updateLanguage)
   // จึงไม่ต้องใช้ setTimeout รอ DOM แบบเดิมอีก และไม่เกิด race ระหว่างสองไฟล์

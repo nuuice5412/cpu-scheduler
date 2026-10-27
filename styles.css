@@ -1561,6 +1561,62 @@ body {
   color: var(--text-muted);
   letter-spacing: 0.02em;
 }
+
+/* กลุ่มปุ่ม/ป้ายท้ายหัวข้อตาราง + ปุ่มส่งออก CSV */
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: var(--radius-pill);
+  background: var(--bg-card);
+  color: var(--clay-purple-dark);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(166, 175, 195, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn-export:hover {
+  transform: translateY(-1px);
+  background: var(--bg-card-alt);
+  box-shadow: 0 6px 14px rgba(166, 175, 195, 0.28);
+}
+.btn-export:active { transform: translateY(0); }
+.btn-export-icon { font-size: 0.95rem; line-height: 1; }
+
+/* แถว AVG WT ท้ายตาราง (ข้อกำหนด: ตารางต้องมีค่าเฉลี่ยเวลารอคอย) */
+.clay-data-table tfoot .avg-row td {
+  background: var(--bg-inset);
+  font-weight: 800;
+  color: var(--text-main);
+}
+.clay-data-table tfoot .avg-label {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.clay-data-table tfoot .avg-value {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--clay-purple-dark);
+}
+.clay-data-table tfoot .avg-note {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+}
 .table-outer-clay {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
