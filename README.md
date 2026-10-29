@@ -202,10 +202,10 @@ The script exits with **0** when everything passes and **1** on the first failur
 
 AI tools were used as assistants, not authors: every suggestion was read, tested and explained by the team before it was kept.
 
-| Phase | Tool | What it helped with |
-| :---: | :--- | :--- |
-| 1 | **Google Antigravity** | Drafting the UI shell — form layout, tab switcher, results table and the Claymorphism styling |
-| 2 | **DeepSeek Harness** (AI coding agent) | Reviewing the UI/integration layer, fixing state bugs (language switch, reset, tab validation), making the Gantt proportional, and adding the automated tests |
+| Phase | Tool | Model | What it helped with |
+| :---: | :--- | :--- | :--- |
+| 1 | **Google Antigravity** | Gemini 3.7 Flash (High) | Drafting the UI shell — form layout, tab switcher, results table and the Claymorphism styling |
+| 2 | **DeepSeek Harness** (AI coding agent) | `deepseek-flash` | Reviewing the UI/integration layer, fixing state bugs (language switch, reset, tab validation), making the Gantt proportional, and adding the automated tests |
 
 Example prompts (abridged):
 
@@ -241,4 +241,4 @@ The scheduling formulas themselves (`calculateFCFS`, `calculateSJF`, `calculateR
 - **CSS features used**: custom properties, layered claymorphism shadows, CSS grid (Gantt), `:has()` (theme and language highlights), `prefers-color-scheme`, print media queries.
 - **Google Chrome 153.0.8010.37** — browser used for development and testing.
 - **Node.js 24.21.0** — optional, only to run the engine tests from the command line.
-- **Google Antigravity** and **DeepSeek Harness** — AI assistants used during development (see *AI usage*).
+- **Google Antigravity** (model **Gemini 3.7 Flash (High)**) and **DeepSeek Harness** (model **`deepseek-flash`**) — AI assistants used during development (see *AI usage*).
