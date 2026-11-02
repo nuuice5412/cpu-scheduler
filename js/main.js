@@ -1,10 +1,24 @@
 /* ==========================================================================
-   main.js
-   เริ่มต้นระบบ: ธีม ภาษา และผูกปุ่มทั้งหมด
-   แยกออกจาก index.html — โหลดด้วย <script src> ตามลำดับใน index.html
+   main.js — เริ่มต้นระบบ
+   สลับธีม + ตั้งค่าเริ่มต้น + ผูกเหตุการณ์ทั้งหมด
    ========================================================================== */
 
-      document.addEventListener('DOMContentLoaded', () => {
+
+/* --------------------------------------------------------------------------
+   สลับธีมสว่าง/มืด
+   -------------------------------------------------------------------------- */
+
+function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('simulator-theme', theme); } catch (e) {}
+        const radio = document.querySelector(`.theme-radio[value="${theme}"]`);
+        if (radio) radio.checked = true;
+      }
+/* --------------------------------------------------------------------------
+   ตั้งค่าเริ่มต้นและผูกเหตุการณ์
+   -------------------------------------------------------------------------- */
+
+document.addEventListener('DOMContentLoaded', () => {
         // Initialize Theme from localStorage or OS preference
         let savedTheme = 'light';
         try {

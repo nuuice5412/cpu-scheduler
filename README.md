@@ -80,7 +80,7 @@ All processes enter the ready queue simultaneously at `t = 0`, so the metrics re
 - Switching **language** re-renders the current results in the new language without losing them.
 - If the form is **invalid**, switching tabs or languages does **not** recompute: the previous results stay on screen and a message explains what to fix.
 - **Reset** restores the default burst times (6, 8, 7, 3), process count 4 and quantum 2, then recalculates.
-- The UI layer lives in **`js/`, one file per responsibility** (i18n, validation, rendering, export, inputs, theme, boot). They are loaded as **classic `<script src>` tags** so the app still runs from `file://` with no build step — ES modules would require an HTTP server.
+- The UI layer lives in **`js/`, four files by responsibility** — `theme-init` (pre-paint theme), `i18n` (dictionaries + language), `ui` (validation, table/Gantt wiring, comparison, CSV export, inputs) and `main` (theme switching + boot). They are loaded as **classic `<script src>` tags**, so the app still runs from `file://` with no build step — ES modules would require an HTTP server.
 
 ---
 
@@ -115,15 +115,10 @@ cpu-scheduler/
 ├── styles.css            # claymorphism tokens, dark theme, responsive + print styles
 ├── app.js                # scheduling engine (FCFS, SJF, RR) + DOM rendering
 ├── js/                   # UI layer, split by responsibility (classic scripts, no build)
-│   ├── theme-init.js     # applies the saved theme before first paint
-│   ├── i18n.js           # TH/EN dictionaries + simText()
-│   ├── ui-language.js    # updateLanguage(): re-labels the whole page
-│   ├── validation.js     # input checks + bilingual error banner
-│   ├── ui-render.js      # result wiring, comparison strip, "stale" state
-│   ├── ui-export.js      # CSV export + algorithm picker menu
-│   ├── ui-inputs.js      # dynamic burst-time fields + hold-to-repeat steppers
-│   ├── ui-theme.js       # light/dark switching
-│   └── main.js           # boot: theme, language, and every event binding
+│   ├── theme-init.js     # applies the saved theme before first paint (loaded in <head>)
+│   ├── i18n.js           # TH/EN dictionaries + simText() + updateLanguage()
+│   ├── ui.js             # validation, result wiring, comparison strip, CSV export, inputs
+│   └── main.js           # theme switching + boot: language and every event binding
 ├── docs/                 # screenshots used by this README
 ├── tests/
 │   ├── engine.spec.js    # the 51 assertions, shared by both runners
