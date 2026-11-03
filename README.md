@@ -105,6 +105,20 @@ ATAT  = (6 + 14 + 21 + 24) / 4         = 16.25 ms
 Makespan                               = 24 ms
 ```
 
+### Paper vs screen — the same case, checked side by side
+
+The same case was solved by hand on paper and then entered into the app; every value matches.
+
+![Hand-written calculation next to the simulator screen, both showing the same FCFS results](docs/handcalc-paper-vs-screen.png)
+
+| Value | On paper | On screen |
+| :--- | :--- | :--- |
+| Completion Time | 6, 14, 21, 24 | 6, 14, 21, 24 |
+| Waiting Time | 0, 6, 14, 21 | 0, 6, 14, 21 |
+| AVG WT | 41 / 4 = **10.25 ms** | **10.25 ms** |
+| AVG TAT | 65 / 4 = **16.25 ms** | **16.25 ms** |
+| Makespan | **24 ms** | **24 ms** |
+
 ---
 
 ## 📂 Project structure
